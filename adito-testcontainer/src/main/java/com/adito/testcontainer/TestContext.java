@@ -269,7 +269,7 @@ public class TestContext implements Context {
         return null;
     }
 
-    public void setTrustMananger(TrustManager trustManager, boolean require) {
+    public void setTrustManager(TrustManager trustManager, boolean require) {
         // No SSL
     }
 

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+
+    <id>bin</id>
+    <baseDirectory>adito-${project.version}</baseDirectory>
+
+    <fileSets>
+        <!-- default layout (empty directories) -->
+        <fileSet>
+            <directory>./</directory>
+            <outputDirectory>logs</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>./</directory>
+            <outputDirectory>tmp</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>./</directory>
+            <outputDirectory>db</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+
+        <!-- default layout (with content) -->
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>com.adito:adito-webapp</include>
+            </includes>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <unpack>true</unpack>
+            <outputDirectory>/webapp</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>com.adito:adito-server</include>
+            </includes>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <outputDirectory>serverlib</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>com.adito:adito-boot</include>
+            </includes>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <outputDirectory>lib</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>*:*:zip:*</include>
+            </includes>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <outputDirectory>conf/repository/archives</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <excludes>
+                <exclude>com.adito:adito-webapp</exclude>
+                <exclude>com.adito:adito-server</exclude>
+                <exclude>com.adito:adito-boot</exclude>
+                <exclude>*:*:zip:*</exclude>
+            </excludes>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <outputDirectory>lib</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+    </dependencySets>
+</assembly>

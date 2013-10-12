@@ -1,0 +1,7 @@
+language: java
+script: mvn -Ptravis-ci clean deploy
+jdk:
+- openjdk6
+env:
+  global:
+    secure: JuN8jxDkRbjWuS8iIsXysc3lBj2IZfft29wd0EypmHgZhsAOqRGChjElXokYc/ZXyPLKtUB4tvF7XQJ3mMCF6ptJkX9Q4btVISkQB1V7AkF5jCIFWOY6XMIFnP86JgA6T4ddGB+COpCRfwkjdJLwPus/DZL4ofBOdd7uC918mD0=

@@ -39,11 +39,6 @@
 
         <!-- I do not know (understand) why we need this deps here -->
         <dependency>
-            <groupId>org.samba.jcifs</groupId>
-            <artifactId>jcifs</artifactId>
-            <version>1.3.3</version>
-        </dependency>
-        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.3</version>

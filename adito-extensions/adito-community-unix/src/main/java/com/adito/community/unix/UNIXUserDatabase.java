@@ -52,11 +52,6 @@ import com.adito.security.Role;
 import com.adito.security.User;
 import com.adito.security.UserDatabaseException;
 import com.adito.security.UserNotFoundException;
-import com.adito.unixauth.BCrypt;
-import com.adito.unixauth.DESCrypt;
-import com.adito.unixauth.MD5Crypt;
-import com.adito.unixauth.UNIXRole;
-import com.adito.unixauth.UNIXUser;
 
 public class UNIXUserDatabase extends DefaultUserDatabase {
     private static final Log LOG = LogFactory.getLog(UNIXUserDatabase.class);

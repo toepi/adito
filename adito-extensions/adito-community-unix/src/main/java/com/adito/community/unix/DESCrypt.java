@@ -1,4 +1,4 @@
-package com.adito.unixauth;
+package com.adito.community.unix;
 /*******************************************************************************
  * JCrypt.java
  * 

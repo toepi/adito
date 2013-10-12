@@ -52,7 +52,7 @@
 
  */
 
-package com.adito.unixauth;
+package com.adito.community.unix;
 
 import com.maverick.crypto.digests.MD5Digest;
 

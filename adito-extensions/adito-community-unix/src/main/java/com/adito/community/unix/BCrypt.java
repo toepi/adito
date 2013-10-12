@@ -1,4 +1,4 @@
-package com.adito.unixauth;
+package com.adito.community.unix;
 
 // Copyright (c) 2006 Damien Miller <djm@mindrot.org>
 //

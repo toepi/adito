@@ -18,7 +18,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 			
-package com.adito.unixauth;
+package com.adito.community.unix;
 
 import java.io.Serializable;
 import java.util.ArrayList;

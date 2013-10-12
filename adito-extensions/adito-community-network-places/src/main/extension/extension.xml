@@ -26,9 +26,10 @@
 		</description>
 		<plugin name="adito-community-network-places"
 			class="com.adito.networkplaces.NetworkPlacePlugin">
-			<classpath>
-				private/adito-community-network-places.jar
-			</classpath>
+			<classpath>private/adito-community-network-places.jar</classpath>
+                        <classpath>private/jcifs-1.3.3.jar</classpath>
+                        <classpath>private/jsch-0.1.50.jar</classpath>
+                        <classpath>private/jzlib-1.0.7.jar</classpath>
 			<resources>webapp</resources>
 		</plugin>
 		<propertyDefinitions>
@@ -85,7 +86,7 @@
 				<definition type="7" name="jcifs.netbios.soTimeout"
 					typeMeta="s" category="40" defaultValue="5000" sortOrder="100"
 					messageResourcesKey="networkPlaces"
-					restartRequired="true" 
+					restartRequired="true"
 					validation="com.adito.input.validators.TimeCounterValidator(minValue=0,maxValue=120)"/>
 				<definition type="1" name="jcifs.netbios.retryCount"
 					typeMeta="" category="40" defaultValue="2" sortOrder="110"
@@ -94,7 +95,7 @@
 				<definition type="7" name="jcifs.netbios.retryTimeout"
 					typeMeta="s" category="40" defaultValue="3000" sortOrder="120"
 					messageResourcesKey="networkPlaces"
-					restartRequired="true" 
+					restartRequired="true"
 					validation="com.adito.input.validators.TimeCounterValidator(minValue=0,maxValue=120)"/>
 				<definition type="0" name="jcifs.smb.client.laddr"
 					typeMeta="" category="40" defaultValue="" sortOrder="130"
@@ -107,12 +108,12 @@
 				<definition type="7"
 					name="jcifs.smb.client.responseTimeout" typeMeta="s" category="40"
 					defaultValue="30000" sortOrder="150"
-					messageResourcesKey="networkPlaces" restartRequired="true" 
+					messageResourcesKey="networkPlaces" restartRequired="true"
 					validation="com.adito.input.validators.TimeCounterValidator(minValue=15,maxValue=300)"/>
 				<definition type="7" name="jcifs.smb.client.soTimeout"
 					typeMeta="s" category="40" defaultValue="35000" sortOrder="150"
 					messageResourcesKey="networkPlaces"
-					restartRequired="true" 
+					restartRequired="true"
 					validation="com.adito.input.validators.TimeCounterValidator(minValue=20,maxValue=360)"/>
 				<definition type="0" name="jcifs.resolveOrder"
 					typeMeta="" category="40" defaultValue="LMHOSTS,WINS,BCAST,DNS"

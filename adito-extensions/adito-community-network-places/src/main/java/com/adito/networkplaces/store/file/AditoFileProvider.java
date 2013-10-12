@@ -25,12 +25,12 @@ import com.adito.networkplaces.NetworkPlaceVFSProvider;
 import com.adito.vfs.AbstractVFSProvider;
 import com.adito.vfs.VFSProvider;
 
-public class FileProvider extends AbstractVFSProvider implements NetworkPlaceVFSProvider {
+public class AditoFileProvider extends AbstractVFSProvider implements NetworkPlaceVFSProvider {
 
     /**
      * Constructor.
      */
-    public FileProvider() {
+    public AditoFileProvider() {
         super(FileStore.FILE_SCHEME,
             true,
             true,

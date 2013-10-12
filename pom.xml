@@ -12,6 +12,17 @@
 
     <description>Adito is a web-based SSL VPN server.</description>
 
+    <issueManagement>
+        <url>https://github.com/toepi/adito/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <scm>
+        <url>https://github.com/toepi/adito</url>
+        <connection>scm:git:git://github.com/toepi/adito.git</connection>
+        <developerConnection>scm:git:git@github.com:toepi/adito.git</developerConnection>
+    </scm>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.sourceVersion>1.5</project.build.sourceVersion>

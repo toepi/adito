@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,7 +16,6 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.community.unix;
 
 import java.io.BufferedReader;
@@ -54,6 +52,7 @@ import com.adito.security.UserDatabaseException;
 import com.adito.security.UserNotFoundException;
 
 public class UNIXUserDatabase extends DefaultUserDatabase {
+
     private static final Log LOG = LogFactory.getLog(UNIXUserDatabase.class);
     private static final File GROUP_FILE = new File("/etc/group");
     private static final File PASSWD_FILE = new File("/etc/passwd");
@@ -80,14 +79,14 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.adito.core.Database#open(com.adito.core.CoreServlet)
      */
     public void open(CoreServlet controllingServlet, Realm realm) throws Exception {
         String osName = SystemProperties.get("os.name", "").toLowerCase();
         if (!osName.startsWith("linux") && !osName.startsWith("solaris")) {
             LOG.warn("The UNIXAuth plugin will only be likely to work on Linux based systems, Solaris or other operating systems "
-                            + "that use /etc/passwd, /etc/group and /etc/shadow. OpenBSD and FreeBSD will definately *not* work.");
+                    + "that use /etc/passwd, /etc/group and /etc/shadow. OpenBSD and FreeBSD will definately *not* work.");
         }
         open = true;
         if (SystemProperties.get("adito.unix.passwordChange", "false").equals("true")) {
@@ -103,12 +102,12 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.adito.security.UserDatabase#logon(java.lang.String,
      *      java.lang.String)
      */
     public User logon(String username, String password) throws UserDatabaseException, InvalidLoginCredentialsException,
-                    AccountLockedException {
+            AccountLockedException {
         if (!checkPassword(username, password)) {
             throw new InvalidLoginCredentialsException();
         }
@@ -121,7 +120,7 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.adito.security.UserDatabase#checkPassword(java.lang.String,
      *      java.lang.String, int)
      */
@@ -165,7 +164,7 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         try {
             checkPasswdFile();
         } catch (Exception e) {
-            throw new UserDatabaseException ("failed to list all users", e);
+            throw new UserDatabaseException("failed to list all users", e);
         }
         return (Iterable<User>) (List<? extends User>) Arrays.asList(users);
     }
@@ -200,7 +199,7 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         try {
             checkGroupFile();
         } catch (Exception e) {
-            throw new UserDatabaseException ("failed to list all roles", e);
+            throw new UserDatabaseException("failed to list all roles", e);
         }
         return (Iterable<Role>) (List<? extends Role>) Arrays.asList(roles);
     }
@@ -273,8 +272,8 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
                             }
                             for (int i = 0; i < roles.length; i++) {
                                 if (roles[i].containsMember(username)
-                                                && !(primaryRole != null && roles[i].getPrincipalName().equals(
-                                                    primaryRole.getPrincipalName()))) {
+                                        && !(primaryRole != null && roles[i].getPrincipalName().equals(
+                                                primaryRole.getPrincipalName()))) {
                                     userRolesList.add(roles[i]);
                                 }
                             }
@@ -287,15 +286,15 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
                                     // No shadow password, continue to the next
                                     // user
                                     LOG.warn("User " + username + " has 'x' as password indicating a shadow password. However, "
-                                                    + "either the shadow file does not exist or an entry for this user "
-                                                    + "does not exist. User has been omitted");
+                                            + "either the shadow file does not exist or an entry for this user "
+                                            + "does not exist. User has been omitted");
                                     continue;
                                 }
                             } else {
                                 pw = password.toCharArray();
                             }
                             UNIXUser user = new UNIXUser(username, userEmailMap == null ? "" : userEmailMap.getProperty(username,
-                                ""), pw, uid, gid, fullname, home, shell, userRoles, this.getRealm());
+                                    ""), pw, uid, gid, fullname, home, shell, userRoles, this.getRealm());
                             userList.add(user);
                         }
                     }
@@ -355,7 +354,7 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
             userEmailMap = new Properties();
         }
         if (userEmailMap != null
-                        && (userEmailMapLastModified == -1 || userEmailMapLastModified != USER_EMAIL_MAP_FILE.lastModified())) {
+                && (userEmailMapLastModified == -1 || userEmailMapLastModified != USER_EMAIL_MAP_FILE.lastModified())) {
             FileInputStream fin = null;
             try {
                 fin = new FileInputStream(USER_EMAIL_MAP_FILE);
@@ -393,7 +392,7 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
     }
 
     public void changePassword(String username, String oldPassword, String password, boolean forcePasswordChangeAtLogon)
-                    throws UserDatabaseException, InvalidLoginCredentialsException {
+            throws UserDatabaseException, InvalidLoginCredentialsException {
         if (!supportsPasswordChange()) {
             throw new InvalidLoginCredentialsException("Database doesn't support password change.");
         }
@@ -403,8 +402,8 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         Process p = null;
         try {
             p = Runtime.getRuntime().exec(
-                "true".equals(SystemProperties.get("adito.useDevConfig", "false")) ? "sudo /usr/sbin/chpasswd"
-                                : "/usr/sbin/chpasswd");
+                    "true".equals(SystemProperties.get("adito.useDevConfig", "false")) ? "sudo /usr/sbin/chpasswd"
+                    : "/usr/sbin/chpasswd");
             new StreamReaderThread(p.getInputStream());
             new StreamReaderThread(p.getErrorStream());
             OutputStream out = p.getOutputStream();
@@ -434,6 +433,7 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
     }
 
     private static final class StreamReaderThread extends Thread {
+
         private final InputStream in;
 
         private StreamReaderThread(InputStream in) {

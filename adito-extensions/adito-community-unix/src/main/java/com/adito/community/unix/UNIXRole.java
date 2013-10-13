@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,7 +16,6 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.community.unix;
 
 import java.io.Serializable;
@@ -29,8 +27,7 @@ import com.adito.realms.Realm;
 import com.adito.security.Role;
 
 /**
- * Implementation of a {@link com.adito.security.Role}
- * for <i>Unix Roles</i>.
+ * Implementation of a {@link com.adito.security.Role} for <i>Unix Roles</i>.
  */
 public class UNIXRole implements Role<UNIXRole>, Serializable {
 
@@ -38,13 +35,13 @@ public class UNIXRole implements Role<UNIXRole>, Serializable {
     private int gid;
     private String[] members;
     private final Realm realm;
-    
+
     /**
-     * @param realm 
+     * @param realm
      * @param etcGroupEntry
      */
     public UNIXRole(Realm realm, String etcGroupEntry) {
-    	this.realm = realm;
+        this.realm = realm;
         String[] elements = etcGroupEntry.split(":");
         name = elements[0];
         if (elements.length > 2 && !name.equals("+")) {
@@ -58,8 +55,7 @@ public class UNIXRole implements Role<UNIXRole>, Serializable {
             }
             members = new String[m.size()];
             m.toArray(members);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Invalid format.");
         }
     }
@@ -86,13 +82,13 @@ public class UNIXRole implements Role<UNIXRole>, Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.adito.permissions.Principal#getPrincipalName()
      */
     public String getPrincipalName() {
         return name;
     }
-    
+
     public String toString() {
         return getPrincipalName();
     }

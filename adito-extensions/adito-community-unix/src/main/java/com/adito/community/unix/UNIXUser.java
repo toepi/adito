@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,7 +16,6 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.community.unix;
 
 import java.util.Date;
@@ -27,8 +25,8 @@ import com.adito.security.DefaultUser;
 import com.adito.security.Role;
 
 /**
- * Implementation of a {@link com.adito.security.DefaultUser}
- * for <i>Unix users</i>.
+ * Implementation of a {@link com.adito.security.DefaultUser} for <i>Unix
+ * users</i>.
  */
 public class UNIXUser extends DefaultUser {
 
@@ -48,7 +46,7 @@ public class UNIXUser extends DefaultUser {
      * @param home
      * @param shell
      * @param roles
-     * @param realm 
+     * @param realm
      */
     public UNIXUser(String username, String email, char[] password, int uid, int gid, String fullname, String home, String shell, Role[] roles, Realm realm) {
         super(username, email, fullname, new Date(), realm);
@@ -129,6 +127,5 @@ public class UNIXUser extends DefaultUser {
     public void setUid(int uid) {
         this.uid = uid;
     }
-
 
 }

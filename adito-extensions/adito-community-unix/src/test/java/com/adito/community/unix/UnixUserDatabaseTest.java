@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,7 +16,6 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.community.unix;
 
 import static org.junit.Assert.assertTrue;
@@ -25,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class UnixUserDatabaseTest {
+
     @Test
     public void writeSomeTests() {
         assertTrue(true);

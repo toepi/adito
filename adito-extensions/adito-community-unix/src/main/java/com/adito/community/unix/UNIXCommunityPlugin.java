@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,7 +16,6 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.community.unix;
 
 import java.io.File;
@@ -34,6 +32,7 @@ import com.adito.extensions.types.PluginDefinition;
 import com.adito.security.UserDatabaseDefinition;
 
 public class UNIXCommunityPlugin extends DefaultPlugin {
+
     private static final Log LOG = LogFactory.getLog(UNIXCommunityPlugin.class);
 
     /**
@@ -45,12 +44,12 @@ public class UNIXCommunityPlugin extends DefaultPlugin {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.adito.extensions.types.Plugin#startPlugin(com.adito.extensions.types.PluginDefinition,
      *      com.adito.extensions.ExtensionDescriptor, org.jdom.Element)
      */
     public void startPlugin(PluginDefinition pluginDefinition, ExtensionDescriptor descriptor, Element element)
-                    throws ExtensionException {
+            throws ExtensionException {
         super.startPlugin(pluginDefinition, descriptor, element);
         if (new File("/etc/passwd").canRead()) {
             UserDatabaseDefinition definition = new UserDatabaseDefinition(UNIXUserDatabase.class, "unixAuth", "unix", -1);

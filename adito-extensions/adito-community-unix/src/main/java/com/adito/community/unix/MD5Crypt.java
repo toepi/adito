@@ -17,7 +17,7 @@
  ----------------------------------------------------------------------------
 
  -----------------------------------------------------------------------
- 
+
  Ganymede Directory Management System
 
  Copyright (C) 1996, 1997, 1998, 1999  The University of Texas at Austin.
@@ -51,7 +51,6 @@
  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
  */
-
 package com.adito.community.unix;
 
 import com.maverick.crypto.digests.MD5Digest;
@@ -62,7 +61,6 @@ import com.maverick.crypto.digests.MD5Digest;
  MD5Crypt
 
  ------------------------------------------------------------------------------*/
-
 /**
  * <p>
  * This class defines a method,
@@ -70,7 +68,7 @@ import com.maverick.crypto.digests.MD5Digest;
  * takes a password and a salt string and generates an
  * OpenBSD/FreeBSD/Linux-compatible md5-encoded password entry.
  * </p>
- * 
+ *
  * <p>
  * Created: 3 November 1999
  * </p>
@@ -82,29 +80,27 @@ import com.maverick.crypto.digests.MD5Digest;
  * </p>
  * <p>
  * Original C Version:
- * 
+ *
  * <pre>
- * 
+ *
  *  ----------------------------------------------------------------------------
  *  &quot;THE BEER-WARE LICENSE&quot; (Revision 42):
  *  &lt;phk@login.dknet.dk&gt; wrote this file.  As long as you retain this notice you
  *  can do whatever you want with this stuff. If we meet some day, and you think
  *  this stuff is worth it, you can buy me a beer in return.   Poul-Henning Kamp
  *  ----------------------------------------------------------------------------
- *  
+ *
  * </pre>
- * 
+ *
  * </p>
  */
-
 public final class MD5Crypt {
 
     /**
-     * 
+     *
      * Command line test rig.
-     *  
+     *
      */
-
     static public void main(String argv[]) {
         if ((argv.length < 1) || (argv.length > 2)) {
             System.err.println("Usage: MD5Crypt password salt");
@@ -145,7 +141,6 @@ public final class MD5Crypt {
      * convert an encoded unsigned byte value into a int with the unsigned
      * value.
      */
-
     static private final int bytes2u(byte inp) {
         return (int) inp & 0xff;
     }
@@ -155,24 +150,21 @@ public final class MD5Crypt {
      * This method actually generates a OpenBSD/FreeBSD/Linux PAM compatible
      * md5-encoded password hash from a plaintext password and a salt.
      * </p>
-     * 
+     *
      * <p>
      * The resulting string will be in the form '$1$&lt;salt&gt;$&lt;hashed
      * mess&gt;
      * </p>
-     * 
-     * @param password
-     *            Plaintext password
-     * 
+     *
+     * @param password Plaintext password
+     *
      * @return An OpenBSD/FreeBSD/Linux-compatible md5-hashed password field.
      */
-
     static public final String crypt(String password) {
         StringBuffer salt = new StringBuffer();
         java.util.Random randgen = new java.util.Random();
 
         /* -- */
-
         while (salt.length() < 8) {
             int index = (int) (randgen.nextFloat() * SALTCHARS.length());
             salt.append(SALTCHARS.substring(index, index + 1));
@@ -186,23 +178,20 @@ public final class MD5Crypt {
      * This method actually generates a OpenBSD/FreeBSD/Linux PAM compatible
      * md5-encoded password hash from a plaintext password and a salt.
      * </p>
-     * 
+     *
      * <p>
      * The resulting string will be in the form '$1$&lt;salt&gt;$&lt;hashed
      * mess&gt;
      * </p>
-     * 
-     * @param password
-     *            Plaintext password
-     * @param salt
-     *            A short string to use to randomize md5. May start with $1$,
-     *            which will be ignored. It is explicitly permitted to pass a
-     *            pre-existing MD5Crypt'ed password entry as the salt. crypt()
-     *            will strip the salt chars out properly.
-     * 
+     *
+     * @param password Plaintext password
+     * @param salt A short string to use to randomize md5. May start with $1$,
+     * which will be ignored. It is explicitly permitted to pass a pre-existing
+     * MD5Crypt'ed password entry as the salt. crypt() will strip the salt chars
+     * out properly.
+     *
      * @return An OpenBSD/FreeBSD/Linux-compatible md5-hashed password field.
      */
-
     static public final String crypt(String password, String salt) {
         /*
          * This string is magic for this algorithm. Having it this way, we can
@@ -219,13 +208,11 @@ public final class MD5Crypt {
         /* Refine the Salt first */
 
         /* If it starts with the magic string, then skip that */
-
         if (salt.startsWith(magic)) {
             salt = salt.substring(magic.length());
         }
 
         /* It stops at the first '$', max 8 chars */
-
         if (salt.indexOf('$') != -1) {
             salt = salt.substring(0, salt.indexOf('$'));
         }
@@ -237,24 +224,23 @@ public final class MD5Crypt {
         ctx = new MD5Digest();
 
         write(ctx, password.getBytes()); // The password first, since that is
-                                         // what is most unknown
+        // what is most unknown
         write(ctx, magic.getBytes()); // Then our magic string
         write(ctx, salt.getBytes()); // Then the raw salt
 
         /* Then just as many characters of the MD5(pw,salt,pw) */
-
         ctx1 = new MD5Digest();
         write(ctx1, password.getBytes());
         write(ctx1, salt.getBytes());
         write(ctx1, password.getBytes());
 
-
         finalState = new byte[ctx1.getDigestSize()];
         ctx1.doFinal(finalState, 0);
 
         for (int pl = password.length(); pl > 0; pl -= 16) {
-            for (int i = 0; i < (pl > 16 ? 16 : pl); i++)
+            for (int i = 0; i < (pl > 16 ? 16 : pl); i++) {
                 ctx.update(finalState[i]);
+            }
         }
 
         /*
@@ -262,11 +248,9 @@ public final class MD5Crypt {
          * dangerous bits out of memory, but doing this is also required in
          * order to get the right output.
          */
-
         clearbits(finalState);
 
         /* Then something really weird... */
-
         for (int i = password.length(); i != 0; i >>>= 1) {
             if ((i & 1) != 0) {
                 ctx.update(finalState[0]);
@@ -282,18 +266,18 @@ public final class MD5Crypt {
          * and now, just to make sure things don't run too fast On a 60 Mhz
          * Pentium this takes 34 msec, so you would need 30 seconds to build a
          * 1000 entry dictionary...
-         * 
+         *
          * (The above timings from the C version)
          */
-
         for (int i = 0; i < 1000; i++) {
             ctx1 = new MD5Digest();
 
             if ((i & 1) != 0) {
                 write(ctx1, password.getBytes());
             } else {
-                for (int c = 0; c < 16; c++)
+                for (int c = 0; c < 16; c++) {
                     ctx1.update(finalState[c]);
+                }
             }
 
             if ((i % 3) != 0) {
@@ -305,19 +289,18 @@ public final class MD5Crypt {
             }
 
             if ((i & 1) != 0) {
-                for (int c = 0; c < 16; c++)
+                for (int c = 0; c < 16; c++) {
                     ctx1.update(finalState[c]);
+                }
             } else {
                 write(ctx1, password.getBytes());
             }
-
 
             finalState = new byte[ctx.getDigestSize()];
             ctx1.doFinal(finalState, 0);
         }
 
         /* Now make the output string */
-
         StringBuffer result = new StringBuffer();
 
         result.append(magic);
@@ -347,7 +330,7 @@ public final class MD5Crypt {
 
         return result.toString();
     }
-    
+
     static void write(MD5Digest digest, byte[] arr) {
         digest.update(arr, 0, arr.length);
     }

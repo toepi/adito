@@ -1,1 +1,1 @@
-"!https://travis-ci.org/toepi/adito-maven.png!":https://travis-ci.org/toepi/adito-maven
+[![Build Status](https://travis-ci.org/toepi/adito-maven.png)](https://travis-ci.org/toepi/adito-maven)

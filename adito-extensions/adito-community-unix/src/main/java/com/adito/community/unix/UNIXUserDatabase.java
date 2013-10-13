@@ -121,18 +121,16 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         }
 
         // Determine the password type
-        String pw = new String(user.getPassword());
+        final String pwdHash = new String(user.getPassword());
         try {
-            if (pw.startsWith("$1$")) {
-                // MD5
-                return pw.substring(12).equals(MD5Crypt.crypt(password, pw.substring(3, 11)).substring(12));
-            } else if (pw.startsWith("$2a$")) {
+            final PasswordChecker pwdChecker;
+            if (pwdHash.startsWith("$2a$")) {
                 // Blowfish
-                return BCrypt.checkpw(password, pw);
+                pwdChecker = new BCrypt();
             } else {
-                // DES
-                return DESCrypt.crypt(pw.substring(0, 2), password).equals(pw.substring(2));
+                pwdChecker = new DefaultPasswordChecker();
             }
+            return pwdChecker.checkpw(password, pwdHash);
         } catch (Exception e) {
             throw new UserDatabaseException("Invalid password format.", e);
         }

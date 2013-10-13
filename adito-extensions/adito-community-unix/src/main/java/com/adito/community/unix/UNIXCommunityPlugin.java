@@ -42,12 +42,7 @@ public class UNIXCommunityPlugin extends DefaultPlugin {
         super(null, false);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.adito.extensions.types.Plugin#startPlugin(com.adito.extensions.types.PluginDefinition,
-     *      com.adito.extensions.ExtensionDescriptor, org.jdom.Element)
-     */
+    @Override
     public void startPlugin(PluginDefinition pluginDefinition, ExtensionDescriptor descriptor, Element element)
             throws ExtensionException {
         super.startPlugin(pluginDefinition, descriptor, element);

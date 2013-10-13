@@ -36,18 +36,6 @@ public class UNIXUser extends DefaultUser {
     private int uid;
     private int gid;
 
-    /**
-     * @param username
-     * @param email
-     * @param password
-     * @param uid
-     * @param gid
-     * @param fullname
-     * @param home
-     * @param shell
-     * @param roles
-     * @param realm
-     */
     public UNIXUser(String username, String email, char[] password, int uid, int gid, String fullname, String home, String shell, Role[] roles, Realm realm) {
         super(username, email, fullname, new Date(), realm);
         setRoles(roles);
@@ -58,74 +46,43 @@ public class UNIXUser extends DefaultUser {
         this.shell = shell;
     }
 
-    /**
-     * @return int
-     */
     public int getGid() {
         return gid;
     }
 
-    /**
-     * @param gid
-     */
     public void setGid(int gid) {
         this.gid = gid;
     }
 
-    /**
-     * @return String
-     */
     public String getHome() {
         return home;
     }
 
-    /**
-     * @param home
-     */
     public void setHome(String home) {
         this.home = home;
     }
 
-    /**
-     * @return char[]
-     */
     public char[] getPassword() {
         return password;
     }
 
-    /**
-     * @param password
-     */
     public void setPassword(char[] password) {
         this.password = password;
     }
 
-    /**
-     * @return String
-     */
     public String getShell() {
         return shell;
     }
 
-    /**
-     * @param shell
-     */
     public void setShell(String shell) {
         this.shell = shell;
     }
 
-    /**
-     * @return int
-     */
     public int getUid() {
         return uid;
     }
 
-    /**
-     * @param uid
-     */
     public void setUid(int uid) {
         this.uid = uid;
     }
-
 }

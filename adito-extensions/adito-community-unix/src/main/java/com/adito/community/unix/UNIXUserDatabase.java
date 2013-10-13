@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -46,7 +45,6 @@ import com.adito.realms.Realm;
 import com.adito.security.AccountLockedException;
 import com.adito.security.DefaultUserDatabase;
 import com.adito.security.InvalidLoginCredentialsException;
-import com.adito.security.Role;
 import com.adito.security.User;
 import com.adito.security.UserDatabaseException;
 import com.adito.security.UserNotFoundException;
@@ -77,12 +75,8 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         super("Unix", false, false);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.adito.core.Database#open(com.adito.core.CoreServlet)
-     */
-    public void open(CoreServlet controllingServlet, Realm realm) throws Exception {
+    @Override
+    public void open(CoreServlet controllingServlet, Realm realm) {
         String osName = SystemProperties.get("os.name", "").toLowerCase();
         if (!osName.startsWith("linux") && !osName.startsWith("solaris")) {
             LOG.warn("The UNIXAuth plugin will only be likely to work on Linux based systems, Solaris or other operating systems "
@@ -100,12 +94,6 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         this.realm = realm;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.adito.security.UserDatabase#logon(java.lang.String,
-     *      java.lang.String)
-     */
     public User logon(String username, String password) throws UserDatabaseException, InvalidLoginCredentialsException,
             AccountLockedException {
         if (!checkPassword(username, password)) {
@@ -118,17 +106,11 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.adito.security.UserDatabase#checkPassword(java.lang.String,
-     *      java.lang.String, int)
-     */
     public boolean checkPassword(String username, String password) throws UserDatabaseException, InvalidLoginCredentialsException {
         // Get the user account
         UNIXUser user = null;
         try {
-            user = (UNIXUser) getAccount(username);
+            user = getAccount(username);
         } catch (Exception e) {
             throw new UserDatabaseException("Could not get user account", e);
         }
@@ -160,60 +142,57 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
     }
 
     @SuppressWarnings("unchecked")
-    public Iterable<User> allUsers() throws UserDatabaseException {
+    public Iterable<UNIXUser> allUsers() throws UserDatabaseException {
         try {
             checkPasswdFile();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new UserDatabaseException("failed to list all users", e);
         }
-        return (Iterable<User>) (List<? extends User>) Arrays.asList(users);
+        return Arrays.asList(users);
     }
 
-    public User getAccount(String username) throws UserNotFoundException, Exception {
+    public UNIXUser getAccount(String username) throws UserNotFoundException, Exception {
         try {
             checkPasswdFile();
-            for (int i = 0; i < users.length; i++) {
-                if (users[i].getPrincipalName().equals(username)) {
-                    return users[i];
+            for (UNIXUser user : users) {
+                if (user.getPrincipalName().equals(username)) {
+                    return user;
                 }
             }
             throw new UserNotFoundException("Could not find user " + username);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
             throw e;
         }
     }
 
     public UNIXRole getRole(String rolename) throws Exception {
         checkGroupFile();
-        for (int i = 0; i < roles.length; i++) {
-            if (roles[i].getPrincipalName().equals(rolename)) {
-                return roles[i];
+        for (UNIXRole role : roles) {
+            if (role.getPrincipalName().equals(rolename)) {
+                return role;
             }
         }
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public Iterable<Role> allRoles() throws UserDatabaseException {
+    public Iterable<UNIXRole> allRoles() throws UserDatabaseException {
         try {
             checkGroupFile();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new UserDatabaseException("failed to list all roles", e);
         }
-        return (Iterable<Role>) (List<? extends Role>) Arrays.asList(roles);
+        return Arrays.asList(roles);
     }
 
-    private void checkGroupFile() throws Exception {
-        Date current = null;
+    private void checkGroupFile() throws IOException {
         if (GROUP_FILE.exists()) {
-            current = new Date(GROUP_FILE.lastModified());
+            final Date current = new Date(GROUP_FILE.lastModified());
             if (lastGroupFileChange == null || !lastGroupFileChange.equals(current)) {
                 lastGroupFileChange = current;
-                String line = null;
                 FileInputStream fin = new FileInputStream(GROUP_FILE);
                 List<UNIXRole> rolesList = new ArrayList<UNIXRole>();
                 try {
+                    String line;
                     BufferedReader r = new BufferedReader(new InputStreamReader(fin));
                     while ((line = r.readLine()) != null) {
                         try {
@@ -233,8 +212,7 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         }
     }
 
-    private void checkPasswdFile() throws Exception {
-        Date current = null;
+    private void checkPasswdFile() throws IOException {
         if (PASSWD_FILE.exists()) {
             if (checkShadowFile()) {
                 lastPasswdFileChange = null;
@@ -242,14 +220,14 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
             if (checkUserEmailMapFile()) {
                 lastPasswdFileChange = null;
             }
-            current = new Date(PASSWD_FILE.lastModified());
+            final Date current = new Date(PASSWD_FILE.lastModified());
             if (lastPasswdFileChange == null || !lastPasswdFileChange.equals(current)) {
                 lastPasswdFileChange = current;
-                String line = null;
                 FileInputStream fin = new FileInputStream(PASSWD_FILE);
                 List<User> userList = new ArrayList<User>();
                 try {
                     BufferedReader r = new BufferedReader(new InputStreamReader(fin));
+                    String line;
                     while ((line = r.readLine()) != null) {
                         String[] elements = line.split(":");
                         String username = elements[0];
@@ -270,21 +248,20 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
                             } else {
                                 userRolesList.add(primaryRole);
                             }
-                            for (int i = 0; i < roles.length; i++) {
-                                if (roles[i].containsMember(username)
-                                        && !(primaryRole != null && roles[i].getPrincipalName().equals(
-                                                primaryRole.getPrincipalName()))) {
-                                    userRolesList.add(roles[i]);
+                            for (UNIXRole role : roles) {
+                                if (role.containsMember(username)
+                                        && !(primaryRole != null
+                                        && role.getPrincipalName().equals(primaryRole.getPrincipalName()))) {
+                                    userRolesList.add(role);
                                 }
                             }
                             UNIXRole[] userRoles = new UNIXRole[userRolesList.size()];
                             userRolesList.toArray(userRoles);
-                            char[] pw = null;
+                            final char[] pw;
                             if (password.equals("x")) {
                                 pw = (char[]) shadowPasswords.get(username);
                                 if (pw == null) {
-                                    // No shadow password, continue to the next
-                                    // user
+                                    // No shadow password, continue to the next user
                                     LOG.warn("User " + username + " has 'x' as password indicating a shadow password. However, "
                                             + "either the shadow file does not exist or an entry for this user "
                                             + "does not exist. User has been omitted");
@@ -293,8 +270,8 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
                             } else {
                                 pw = password.toCharArray();
                             }
-                            UNIXUser user = new UNIXUser(username, userEmailMap == null ? "" : userEmailMap.getProperty(username,
-                                    ""), pw, uid, gid, fullname, home, shell, userRoles, this.getRealm());
+                            UNIXUser user = new UNIXUser(username, userEmailMap == null ? "" : userEmailMap.getProperty(username,""),
+                                    pw, uid, gid, fullname, home, shell, userRoles, this.getRealm());
                             userList.add(user);
                         }
                     }
@@ -310,17 +287,16 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         }
     }
 
-    private synchronized boolean checkShadowFile() throws Exception {
-        Date current = null;
+    private synchronized boolean checkShadowFile() throws IOException {
         shadowPasswords = new HashMap<String, char[]>();
         if (SHADOW_FILE.exists()) {
-            current = new Date(SHADOW_FILE.lastModified());
+            final Date current = new Date(SHADOW_FILE.lastModified());
             if (lastShadowFileChange == null || !lastShadowFileChange.equals(current)) {
                 lastShadowFileChange = current;
-                String line = null;
                 FileInputStream fin = new FileInputStream(SHADOW_FILE);
                 try {
                     BufferedReader r = new BufferedReader(new InputStreamReader(fin));
+                    String line;
                     while ((line = r.readLine()) != null) {
                         String[] elements = line.split(":");
                         String username = elements[0];
@@ -343,7 +319,7 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         return false;
     }
 
-    private synchronized boolean checkUserEmailMapFile() throws Exception {
+    private synchronized boolean checkUserEmailMapFile() {
         if (!USER_EMAIL_MAP_FILE.exists()) {
             if (userEmailMap != null) {
                 userEmailMap = null;
@@ -370,27 +346,26 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
         return false;
     }
 
-    /**
-     * @param gid
-     * @return
-     */
-    private UNIXRole getRoleByGID(int gid) throws Exception {
+    private UNIXRole getRoleByGID(int gid) throws IOException {
         checkGroupFile();
-        for (int i = 0; i < roles.length; i++) {
-            if (roles[i].getGid() == gid) {
-                return roles[i];
+        for (UNIXRole role : roles) {
+            if (role.getGid() == gid) {
+                return role;
             }
         }
         return null;
     }
 
+    @Override
     public void cleanup() throws Exception {
     }
 
+    @Override
     public boolean isOpen() {
         return open;
     }
 
+    @Override
     public void changePassword(String username, String oldPassword, String password, boolean forcePasswordChangeAtLogon)
             throws UserDatabaseException, InvalidLoginCredentialsException {
         if (!supportsPasswordChange()) {
@@ -404,8 +379,6 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
             p = Runtime.getRuntime().exec(
                     "true".equals(SystemProperties.get("adito.useDevConfig", "false")) ? "sudo /usr/sbin/chpasswd"
                     : "/usr/sbin/chpasswd");
-            new StreamReaderThread(p.getInputStream());
-            new StreamReaderThread(p.getErrorStream());
             OutputStream out = p.getOutputStream();
             PrintWriter pw = new PrintWriter(out);
             pw.println(username + ":" + password);
@@ -428,29 +401,6 @@ public class UNIXUserDatabase extends DefaultUserDatabase {
                 Util.closeStream(p.getOutputStream());
                 Util.closeStream(p.getInputStream());
                 Util.closeStream(p.getErrorStream());
-            }
-        }
-    }
-
-    private static final class StreamReaderThread extends Thread {
-
-        private final InputStream in;
-
-        private StreamReaderThread(InputStream in) {
-            this.in = in;
-        }
-
-        public void run() {
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Output from chpasswd: '" + line + "'");
-                    }
-                }
-            } catch (IOException ioe) {
-                // nothing to do
             }
         }
     }

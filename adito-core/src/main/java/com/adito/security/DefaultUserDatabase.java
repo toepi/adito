@@ -1,5 +1,5 @@
 
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,7 +17,6 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.security;
 
 import java.util.ArrayList;
@@ -39,6 +38,7 @@ import com.adito.realms.Realm;
  * Default implementation of a {@link com.adito.security.UserDatabase}.
  */
 public abstract class DefaultUserDatabase implements UserDatabase {
+
     private static final Log LOG = LogFactory.getLog(DefaultUserDatabase.class);
     private final String description;
     private final boolean supportsAccountCreation;
@@ -49,9 +49,12 @@ public abstract class DefaultUserDatabase implements UserDatabase {
 
     /**
      * Constructor.
+     *
      * @param description description
-     * @param supportsAccountCreation true if concrete user database supports account creation
-     * @param supportsPasswordChange true if concrete user database supports password changing
+     * @param supportsAccountCreation true if concrete user database supports
+     * account creation
+     * @param supportsPasswordChange true if concrete user database supports
+     * password changing
      */
     public DefaultUserDatabase(String description, boolean supportsAccountCreation, boolean supportsPasswordChange) {
         this.description = description;
@@ -102,10 +105,10 @@ public abstract class DefaultUserDatabase implements UserDatabase {
      * @see com.adito.security.UserDatabase#changePassword(java.lang.String, java.lang.String, java.lang.String, boolean)
      */
     public void changePassword(String username, String oldPassword, String password, boolean forcePasswordChangeAtLogon)
-                    throws UserDatabaseException, InvalidLoginCredentialsException {
+            throws UserDatabaseException, InvalidLoginCredentialsException {
         assertSupportsPasswordChange();
         throw new InvalidLoginCredentialsException(
-                        "User database is not read-only, but the changePassword() method has not been implemented");
+                "User database is not read-only, but the changePassword() method has not been implemented");
     }
 
     /*
@@ -113,7 +116,7 @@ public abstract class DefaultUserDatabase implements UserDatabase {
      * @see com.adito.security.UserDatabase#setPassword(java.lang.String, java.lang.String, boolean, com.adito.security.User, java.lang.String)
      */
     public void setPassword(String username, String password, boolean forcePasswordChangeAtLogon, User adminUser,
-                            String adminPassword) throws UserDatabaseException, InvalidLoginCredentialsException {
+            String adminPassword) throws UserDatabaseException, InvalidLoginCredentialsException {
         assertSupportsPasswordChange();
         throw new InvalidLoginCredentialsException("");
 
@@ -149,7 +152,7 @@ public abstract class DefaultUserDatabase implements UserDatabase {
 
     protected void performDeleteAccount(User user) throws Exception, UserNotFoundException {
         throw new UnsupportedOperationException(
-                        "User database is not read-only, but the deleteAccount() method has not been implemented");
+                "User database is not read-only, but the deleteAccount() method has not been implemented");
     }
 
     /*
@@ -169,19 +172,19 @@ public abstract class DefaultUserDatabase implements UserDatabase {
         assertSupportsAccountCreation();
         throw new Exception("User database is not read-only, but the deleteRole() method has not been implemented");
     }
-    
+
     protected void assertSupportsPasswordChange() throws InvalidLoginCredentialsException {
         if (!supportsPasswordChange()) {
             throw new InvalidLoginCredentialsException("Database doesn't support password change.");
         }
     }
-    
+
     protected void assertSupportsAccountCreation() {
         if (!supportsAccountCreation()) {
             throw new UnsupportedOperationException("User database is read-only");
         }
     }
-    
+
     public final boolean isAccountNameInUse(String username) throws UserDatabaseException {
         try {
             getAccount(username);
@@ -190,16 +193,16 @@ public abstract class DefaultUserDatabase implements UserDatabase {
             return false;
         }
     }
-    
+
     public final User[] listAllUsers(String filter, int maxResults) throws UserDatabaseException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("List '" + maxResults + "' users with filter '" + filter + "'");
         }
-        
+
         Collection<User> users = filterPrincipals(filter, maxResults, allUsers(), false);
         return users.toArray(new User[users.size()]);
     }
-    
+
     public final int getMaxUserResults() {
         return Property.getPropertyInt(new SystemConfigKey("ui.maxuser.count"));
     }
@@ -212,26 +215,26 @@ public abstract class DefaultUserDatabase implements UserDatabase {
             return false;
         }
     }
-    
+
     public final Role[] listAllRoles(String filter, int maxResults) throws UserDatabaseException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("List '" + maxResults + "' groups with filter '" + filter + "'");
         }
-        
+
         Collection<Role> roles = filterPrincipals(filter, maxResults, allRoles(), false);
         return roles.toArray(new Role[roles.size()]);
     }
-    
+
     public final int getMaxRoleResults() {
         return Property.getPropertyInt(new SystemConfigKey("ui.maxrole.count"));
     }
-    
-    private static <T extends Principal> Collection<T> filterPrincipals(String filter, int maxResults, Iterable<T> itr, boolean caseSensitive) {
+
+    private static <T extends Principal> Collection<T> filterPrincipals(String filter, int maxResults, Iterable<? extends T> itr, boolean caseSensitive) {
         Collection<T> principals = new ArrayList<T>();
         String regex = Util.parseSimplePatternToRegExp(filter);
         int patternFlags = caseSensitive ? 0 : Pattern.CASE_INSENSITIVE;
         Pattern pattern = Pattern.compile(regex, patternFlags);
-        
+
         for (T principal : itr) {
             if (principals.size() < maxResults) {
                 boolean matches = pattern.matcher(principal.getPrincipalName()).matches();
@@ -254,7 +257,7 @@ public abstract class DefaultUserDatabase implements UserDatabase {
         }
         return (User[]) usersWithRole.toArray(new User[usersWithRole.size()]);
     }
-    
+
     protected static <T> Iterable<T> toIterable(final Iterator<T> itr) {
         return new Iterable<T>() {
             public Iterator<T> iterator() {
@@ -262,7 +265,7 @@ public abstract class DefaultUserDatabase implements UserDatabase {
             }
         };
     }
-    
+
     /*
      * (non-Javadoc)
      * @see com.adito.core.Database#cleanup()

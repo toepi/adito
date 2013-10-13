@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,7 +16,6 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.security;
 
 import com.adito.core.CoreServlet;
@@ -25,29 +23,32 @@ import com.adito.core.Database;
 import com.adito.realms.Realm;
 
 /**
- * <p>Implementations of this interface will provide basic user and role related
+ * <p>
+ * Implementations of this interface will provide basic user and role related
  * services such as retrieving a user account, retrieving a role, authenticating
  * a user etc.
- * 
- * <p>Some implementations will now support account creation or password
- * changing and as such should return appropriate values for {@link #supportsAccountCreation()}
- * and {@link #supportsPasswordChange()}.
+ *
+ * <p>
+ * Some implementations will now support account creation or password changing
+ * and as such should return appropriate values for
+ * {@link #supportsAccountCreation()} and {@link #supportsPasswordChange()}.
  */
 public interface UserDatabase extends Database {
+
     /**
      */
     String WILDCARD_SEARCH = "*";
 
     /**
      * Get a readable description of the database.
-     * 
+     *
      * @return description
      */
     public String getDatabaseDescription();
 
     /**
      * Get if the database is currently 'open'.
-     * 
+     *
      * @return open
      */
     public boolean isOpen();
@@ -55,7 +56,7 @@ public interface UserDatabase extends Database {
     /**
      * Authenticates the given username/password pair, returning the user object
      * on success or <tt>null</tt> on failure.
-     * 
+     *
      * @param username
      * @param password
      * @return user object
@@ -64,12 +65,12 @@ public interface UserDatabase extends Database {
      * @throws AccountLockedException
      */
     public User logon(String username, String password) throws UserDatabaseException, InvalidLoginCredentialsException,
-                    AccountLockedException;
+            AccountLockedException;
 
     /**
      * Check the given username/password pair but do not actually logon.
      * <tt>true</tt> is returned on success and <tt>false</tt> on failure.
-     * 
+     *
      * @param username
      * @param password
      * @return password ok
@@ -79,22 +80,24 @@ public interface UserDatabase extends Database {
     public boolean checkPassword(String username, String password) throws UserDatabaseException, InvalidLoginCredentialsException;
 
     /**
-     * Change your password. This method is used by a user to change their own passwords. It
-     * is recommended that implementations verify that the old password is correct.
-     * 
+     * Change your password. This method is used by a user to change their own
+     * passwords. It is recommended that implementations verify that the old
+     * password is correct.
+     *
      * @param username username
-     * @param oldPassword 
+     * @param oldPassword
      * @param password new password
      * @param forcePasswordChangeAtLogon force password change at next logon
      * @throws UserDatabaseException
      * @throws InvalidLoginCredentialsException
      */
     public void changePassword(String username, String oldPassword, String password, boolean forcePasswordChangeAtLogon) throws UserDatabaseException,
-                    InvalidLoginCredentialsException;
+            InvalidLoginCredentialsException;
 
     /**
-     * Set a users password. This is used from the admin pages and requires admin user and password
-     * to complete.
+     * Set a users password. This is used from the admin pages and requires
+     * admin user and password to complete.
+     *
      * @param username
      * @param password
      * @param forcePasswordChangeAtLogon
@@ -104,33 +107,29 @@ public interface UserDatabase extends Database {
      * @throws InvalidLoginCredentialsException
      */
     public void setPassword(String username, String password, boolean forcePasswordChangeAtLogon, User adminUser, String adminPassword) throws UserDatabaseException, InvalidLoginCredentialsException;
-    
+
     /**
      * Get if this implementation supports changine of passwords
-     * 
+     *
      * @return password change supported
      */
     public boolean supportsPasswordChange();
 
     /**
      * Logout a user.
-     * 
+     *
      * @param user
      */
     public void logout(User user);
 
-    /**
-     * @return
-     * @throws UserDatabaseException
-     */
-    Iterable<User> allUsers() throws UserDatabaseException;
-    
+    Iterable<? extends User> allUsers() throws UserDatabaseException;
+
     /**
      * List all the users currently registered with the system. This is the list
      * of all users rather than those that are granted access
-     * 
+     *
      * @param filter filter a filter to apply to the search
-     * @param maxResults 
+     * @param maxResults
      * @return an array of {@link User}s
      * @throws UserDatabaseException
      */
@@ -139,25 +138,24 @@ public interface UserDatabase extends Database {
     /**
      * The number of users retrieved and displayed for the provided search
      * criteria.
-     * 
+     *
      * @return maximum number of users
      */
     int getMaxUserResults();
-    
+
     /**
      * Does the username already belong to another user?
-     * 
+     *
      * @param username
      * @return <tt>true</tt> if an account already matches the supplied
-     *         username.
+     * username.
      * @throws UserDatabaseException
      */
     boolean isAccountNameInUse(String username) throws UserDatabaseException;
 
-
     /**
      * Get the account details that belong to the given username.
-     * 
+     *
      * @param username
      * @return user
      * @throws UserNotFoundException if the user could not be found
@@ -168,16 +166,16 @@ public interface UserDatabase extends Database {
     /**
      * Identify whether this implementation supports the creation of user
      * accounts.
-     * 
+     *
      * @return <tt>true</tt> if account creation is supported, otherwise
-     *         <tt>false</tt>.
+     * <tt>false</tt>.
      */
     public boolean supportsAccountCreation();
 
     /**
-     * Create a new {@link User}account. This method is optional and should
-     * only work when {@link #supportsAccountCreation()} returns <tt>true</tt>.
-     * 
+     * Create a new {@link User}account. This method is optional and should only
+     * work when {@link #supportsAccountCreation()} returns <tt>true</tt>.
+     *
      * @param username username
      * @param password password
      * @param email email address
@@ -192,7 +190,7 @@ public interface UserDatabase extends Database {
      * Update the details of a {@link User}account. This method is optional and
      * should only work when {@link #supportsAccountCreation()} returns
      * <tt>true</tt>.#
-     * 
+     *
      * @param user
      * @param email
      * @param fullname
@@ -204,34 +202,29 @@ public interface UserDatabase extends Database {
     /**
      * Delete a {@link User} account. This method is optional and should only
      * work when {@link #supportsAccountCreation()} returns <tt>true</tt>.
-     * 
+     *
      * @param user
      * @throws Exception
-     * @throws UserNotFoundException 
+     * @throws UserNotFoundException
      */
     public void deleteAccount(User user) throws Exception, UserNotFoundException;
 
-
     /**
      * Get a single role given its name
-     * 
+     *
      * @param rolename role name
      * @return role
      * @throws Exception on any error
      */
     public Role getRole(String rolename) throws Exception;
 
-    /**
-     * @return
-     * @throws UserDatabaseException 
-     */
-    Iterable<Role> allRoles() throws UserDatabaseException;
-    
+    Iterable<? extends Role> allRoles() throws UserDatabaseException;
+
     /**
      * List all available roles
-     * 
+     *
      * @param filter filter
-     * @param maxResults 
+     * @param maxResults
      * @return array of roles
      * @throws UserDatabaseException
      */
@@ -240,25 +233,23 @@ public interface UserDatabase extends Database {
     /**
      * The number of roles retrieved and displayed for the provided search
      * criteria.
-     * 
+     *
      * @return maximum number of roles
      */
-     int getMaxRoleResults();
-    
+    int getMaxRoleResults();
+
     /**
      * Does the rolename already belong to another role?
-     * 
+     *
      * @param rolename
-     * @return <tt>true</tt> if a role already matches the supplied
-     *         rolename.
+     * @return <tt>true</tt> if a role already matches the supplied rolename.
      * @throws UserDatabaseException
      */
     boolean isRoleNameInUse(String rolename) throws UserDatabaseException;
-    
 
     /**
      * Create a new role if the underlying database supports it.
-     * 
+     *
      * @param rolename role name
      * @return role object
      * @throws Exception on any error
@@ -267,22 +258,22 @@ public interface UserDatabase extends Database {
 
     /**
      * Delete a new role
-     * 
+     *
      * @param rolename role name
      * @throws Exception on any error
      */
     public void deleteRole(String rolename) throws Exception;
-    
+
     /**
-     * Get the a list of {@link com.adito.security.User}s that are in
-     * a specified role
-     * 
+     * Get the a list of {@link com.adito.security.User}s that are in a
+     * specified role
+     *
      * @param role role
      * @return users in role
      * @throws Exception on any error
      */
     public User[] getUsersInRole(Role role) throws Exception;
-    
+
     /**
      * @return Realm
      */
@@ -291,7 +282,7 @@ public interface UserDatabase extends Database {
     /**
      * @param controllingServlet
      * @param realm
-     * @throws Exception 
+     * @throws Exception
      */
     public void open(CoreServlet controllingServlet, Realm realm) throws Exception;
 }

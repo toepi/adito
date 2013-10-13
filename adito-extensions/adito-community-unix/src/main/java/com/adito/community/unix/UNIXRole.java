@@ -31,7 +31,7 @@ import com.adito.security.Role;
  */
 public class UNIXRole implements Role<UNIXRole>, Serializable {
 
-    private String name;
+    private final String name;
     private int gid;
     private String[] members;
     private final Realm realm;
@@ -60,17 +60,10 @@ public class UNIXRole implements Role<UNIXRole>, Serializable {
         }
     }
 
-    /**
-     * @return int
-     */
     public int getGid() {
         return gid;
     }
 
-    /**
-     * @param username
-     * @return boolean
-     */
     public boolean containsMember(String username) {
         for (int i = 0; i < members.length; i++) {
             if (members[i].equals(username)) {
@@ -80,15 +73,11 @@ public class UNIXRole implements Role<UNIXRole>, Serializable {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.adito.permissions.Principal#getPrincipalName()
-     */
     public String getPrincipalName() {
         return name;
     }
 
+    @Override
     public String toString() {
         return getPrincipalName();
     }
@@ -97,9 +86,6 @@ public class UNIXRole implements Role<UNIXRole>, Serializable {
         return getPrincipalName().compareTo(o.getPrincipalName());
     }
 
-    /* (non-Javadoc)
-     * @see com.adito.policyframework.Principal#getRealm()
-     */
     public Realm getRealm() {
         return realm;
     }

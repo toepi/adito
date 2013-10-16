@@ -102,6 +102,13 @@ public class AditoExtensionMojo extends AbstractMojo {
      */
     private boolean writeClasspath;
     /**
+     * Finalname.
+     *
+     * @parameter expression="${project.build.finalName}"
+     * @required
+     */
+    private String finalname;
+    /**
      * @component
      */
     private MavenProjectHelper projectHelper;
@@ -135,12 +142,12 @@ public class AditoExtensionMojo extends AbstractMojo {
         }
         final ExtensionBundle extension;
         if (writeClasspath) {
-            final File extesionXmlFile = new File(getExtensionSourceDirectory(), "extension.xml");        
+            final File extesionXmlFile = new File(getExtensionSourceDirectory(), "extension.xml");
             extension = JAXB.unmarshal(extesionXmlFile, ExtensionBundle.class);
         } else {
             extension = null;
-        }        
-        final File extensionZip = new ExtensionArchiverBuilder(extensionName, extensionArchiver, outputDirectory)                
+        }
+        final File extensionZip = new ExtensionArchiverBuilder(extensionName, extensionArchiver, getOutputFile("zip"))
                 .addExtensionDirectory(getExtensionSourceDirectory())
                 .addExtensionClasspathFile(jarFile, "private")
                 .addExtensionClasspathFile(project.getCompileArtifacts(), "private")
@@ -163,8 +170,8 @@ public class AditoExtensionMojo extends AbstractMojo {
         return result;
     }
 
-    private File getOutputFile(String extension) {
-        return new File(new File(outputDirectory), String.format("%s.%s", extensionName, extension));
+    private File getOutputFile(final String extension) {
+        return new File(new File(outputDirectory), String.format("%s.%s", finalname, extension));
     }
 
     private File getWebappDirectory() {

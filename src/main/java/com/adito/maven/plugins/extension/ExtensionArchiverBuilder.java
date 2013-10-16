@@ -35,16 +35,11 @@ class ExtensionArchiverBuilder {
     private ExtensionBundle extension;
 
     public ExtensionArchiverBuilder(final String extensionName,
-            final ZipArchiver archiver, final String outputDirectory) {
+            final ZipArchiver archiver, final File destFile) {
         this.archiver = archiver;
-        this.archiver.setDestFile(createOutputFile(outputDirectory, extensionName));        
+        this.archiver.setDestFile(destFile);
         this.extensionName = extensionName;
         classpathEntries = new HashSet<String>();
-    }
-
-    private File createOutputFile(final String outputDirectory,
-            final String extensionName) {
-        return new File(outputDirectory, String.format("%s.zip", extensionName));
     }
 
     public ExtensionArchiverBuilder addExtensionDirectory(final File dir)

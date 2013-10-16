@@ -1,7 +1,9 @@
 package com.adito.maven.plugins.extension;
 
+import com.adito.extension.ExtensionBundle;
 import java.io.File;
 import java.io.IOException;
+import javax.xml.bind.JAXB;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -93,6 +95,12 @@ public class AditoExtensionMojo extends AbstractMojo {
      */
     private boolean createJar;
     /**
+     * Write/Rewrite Classpath.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean writeClasspath;
+    /**
      * @component
      */
     private MavenProjectHelper projectHelper;
@@ -124,13 +132,21 @@ public class AditoExtensionMojo extends AbstractMojo {
         } else {
             jarFile = null;
         }
-        final File extension = new ExtensionArchiverBuilder(extensionName, extensionJarArchiver, outputDirectory)
+        final ExtensionBundle extension;
+        if (writeClasspath) {
+            final File extesionXmlFile = new File(getExtensionSourceDirectory(), "extension.xml");        
+            extension = JAXB.unmarshal(extesionXmlFile, ExtensionBundle.class);
+        } else {
+            extension = null;
+        }        
+        final File extensionZip = new ExtensionArchiverBuilder(extensionName, extensionJarArchiver, outputDirectory)                
                 .addExtensionDirectory(getExtensionSourceDirectory())
-                .addExtensionFile(jarFile, "private")
-                .addExtensionFile(project.getCompileArtifacts(), "private")
+                .addExtensionClasspathFile(jarFile, "private")
+                .addExtensionClasspathFile(project.getCompileArtifacts(), "private")
                 .addExtensionDirectory(getWebappDirectory(), "webapp")
+                .addExtensionBundle(extension)
                 .createArchive(project, archive);
-        projectHelper.attachArtifact(project, "zip", extension);
+        projectHelper.attachArtifact(project, "zip", extensionZip);
     }
 
     private File createJarFile() throws IOException, ManifestException,

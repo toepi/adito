@@ -15,6 +15,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
 /**
  * @goal adito-extension
@@ -84,10 +85,10 @@ public class AditoExtensionMojo extends AbstractMojo {
     /**
      * Used to create .zip archive.
      *
-     * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="jar"
+     * @component role="org.codehaus.plexus.archiver.Archiver" role-hint="zip"
      * @required
      */
-    private JarArchiver extensionJarArchiver;
+    private ZipArchiver extensionArchiver;
     /**
      * Create extension as jar and put as into private.
      *
@@ -139,7 +140,7 @@ public class AditoExtensionMojo extends AbstractMojo {
         } else {
             extension = null;
         }        
-        final File extensionZip = new ExtensionArchiverBuilder(extensionName, extensionJarArchiver, outputDirectory)                
+        final File extensionZip = new ExtensionArchiverBuilder(extensionName, extensionArchiver, outputDirectory)                
                 .addExtensionDirectory(getExtensionSourceDirectory())
                 .addExtensionClasspathFile(jarFile, "private")
                 .addExtensionClasspathFile(project.getCompileArtifacts(), "private")

@@ -9,13 +9,12 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXB;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
 /**
  *
@@ -31,18 +30,15 @@ class ExtensionArchiverBuilder {
         return file != null && file.exists() && file.isDirectory();
     }
     private final String extensionName;
-    private final MavenArchiver archiver;
+    private final ZipArchiver archiver;
     private final Set<String> classpathEntries;
-    private final String outputDirectory;
     private ExtensionBundle extension;
 
     public ExtensionArchiverBuilder(final String extensionName,
-            final JarArchiver archiver, final String outputDirectory) {
+            final ZipArchiver archiver, final String outputDirectory) {
+        this.archiver = archiver;
+        this.archiver.setDestFile(createOutputFile(outputDirectory, extensionName));        
         this.extensionName = extensionName;
-        this.archiver = new MavenArchiver();
-        this.archiver.setArchiver(archiver);
-        this.outputDirectory = outputDirectory;
-        this.archiver.setOutputFile(createOutputFile(outputDirectory, extensionName));
         classpathEntries = new HashSet<String>();
     }
 
@@ -59,8 +55,7 @@ class ExtensionArchiverBuilder {
     public ExtensionArchiverBuilder addExtensionDirectory(final File dir,
             final String targetDirectory) throws ArchiverException {
         if (isDirectory(dir)) {
-            archiver.getArchiver()
-                    .addDirectory(dir, asExtensionDirectoryName(targetDirectory));
+            archiver.addDirectory(dir, asExtensionDirectoryName(targetDirectory));
         }
         return this;
     }
@@ -89,8 +84,7 @@ class ExtensionArchiverBuilder {
     public ExtensionArchiverBuilder addExtensionFile(final File file,
             final String targetDirectory) throws ArchiverException {
         if (isFile(file)) {
-            archiver.getArchiver()
-                    .addFile(file, asInExtensionFileName(file, targetDirectory));
+            archiver.addFile(file, asInExtensionFileName(file, targetDirectory));
         }
         return this;
     }
@@ -125,8 +119,8 @@ class ExtensionArchiverBuilder {
                 file = writeClassPath();
                 addExtensionFile(file);
             }
-            archiver.createArchive(project, cfg);
-            return archiver.getArchiver().getDestFile();
+            archiver.createArchive();
+            return archiver.getDestFile();
         } finally {
             if (file != null) {
                 file.delete();
@@ -138,7 +132,7 @@ class ExtensionArchiverBuilder {
         final PluginType plugin = extension.getExtension().getPlugin();
         classpathEntries.removeAll(plugin.getClasspath());
         plugin.getClasspath().addAll(classpathEntries);
-        final File file = new File(outputDirectory, "extension.xml");
+        final File file = new File(archiver.getDestFile().getParentFile(), "extension.xml");
         JAXB.marshal(extension, file);
         return file;
     }

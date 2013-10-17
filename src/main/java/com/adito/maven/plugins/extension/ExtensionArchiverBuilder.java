@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXB;
-import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.project.MavenProject;
@@ -105,8 +104,7 @@ class ExtensionArchiverBuilder {
         return sb.append('/').toString();
     }
 
-    public File createArchive(final MavenProject project,
-            final MavenArchiveConfiguration cfg) throws ArchiverException,
+    public File createArchive(final MavenProject project) throws ArchiverException,
             ManifestException, DependencyResolutionRequiredException, IOException {
         File file = null;
         try {

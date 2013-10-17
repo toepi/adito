@@ -74,7 +74,7 @@ public class AditoExtensionMojo extends AbstractMojo {
      *
      * @parameter
      */
-    private MavenArchiveConfiguration archive;
+    private final MavenArchiveConfiguration archive;
     /**
      * Used to create .jar archive.
      *
@@ -153,7 +153,7 @@ public class AditoExtensionMojo extends AbstractMojo {
                 .addExtensionClasspathFile(project.getCompileArtifacts(), "private")
                 .addExtensionDirectory(getWebappDirectory(), "webapp")
                 .addExtensionBundle(extension)
-                .createArchive(project, archive);
+                .createArchive(project);
         projectHelper.attachArtifact(project, "zip", extensionZip);
     }
 

@@ -81,12 +81,14 @@ class ExtensionArchiverBuilder {
     }
 
     private void addToClassPath(final File file, final String targetDirectory) {
-        final StringBuilder sb = new StringBuilder();
-        if (targetDirectory != null) {
-            sb.append(targetDirectory).append('/');
+        if (isFile(file)) {
+            final StringBuilder sb = new StringBuilder();
+            if (targetDirectory != null) {
+                sb.append(targetDirectory).append('/');
+            }
+            sb.append(file.getName());
+            classpathEntries.add(sb.toString());
         }
-        sb.append(file.getName());
-        classpathEntries.add(sb.toString());
     }
 
     private String asInExtensionFileName(final File file, final String inpaths) {

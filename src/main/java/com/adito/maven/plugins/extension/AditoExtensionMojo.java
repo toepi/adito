@@ -16,6 +16,8 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.resolution.DependencyResolutionException;
 
 /**
  * @goal adito-extension
@@ -112,9 +114,14 @@ public class AditoExtensionMojo extends AbstractMojo {
      * @component
      */
     private MavenProjectHelper projectHelper;
+    /**
+     * @parameter default-value="${repositorySystemSession}"
+     * @readonly
+     */
+    private RepositorySystemSession session;
 
     public AditoExtensionMojo() {
-        this.archive = new MavenArchiveConfiguration();
+        this.archive = new MavenArchiveConfiguration();        
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -128,11 +135,13 @@ public class AditoExtensionMojo extends AbstractMojo {
             throw new MojoExecutionException(String.format("Error assembling extension: %s", ex.getMessage()), ex);
         } catch (DependencyResolutionRequiredException ex) {
             throw new MojoExecutionException(String.format("Error assembling extension: %s", ex.getMessage()), ex);
+        } catch (DependencyResolutionException ex) {
+            throw new MojoExecutionException(String.format("Error assembling extension: %s", ex.getMessage()), ex);
         }
     }
 
     private void performPackaging() throws ArchiverException, ManifestException,
-            IOException, DependencyResolutionRequiredException {
+            IOException, DependencyResolutionRequiredException, DependencyResolutionException {
         final File jarFile;
         if (createJar) {
             jarFile = createJarFile();
@@ -147,10 +156,11 @@ public class AditoExtensionMojo extends AbstractMojo {
         } else {
             extension = null;
         }
+        final ProjectDependencyResolver depResolver = new ProjectDependencyResolver(session, project);
         final File extensionZip = new ExtensionArchiverBuilder(extensionName, extensionArchiver, getOutputFile("zip"))
                 .addExtensionDirectory(getExtensionSourceDirectory())
                 .addExtensionClasspathFile(jarFile, "private")
-                .addExtensionClasspathFile(project.getCompileArtifacts(), "private")
+                .addExtensionClasspathFile(depResolver.getCompileArtifacts(), "private")
                 .addExtensionDirectory(getWebappDirectory(), "webapp")
                 .addExtensionBundle(extension)
                 .createArchive(project);

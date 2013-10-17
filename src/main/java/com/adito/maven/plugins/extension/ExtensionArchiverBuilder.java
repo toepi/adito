@@ -8,12 +8,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXB;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.sonatype.aether.artifact.Artifact;
 
 /**
  *
@@ -57,9 +57,7 @@ class ExtensionArchiverBuilder {
     public ExtensionArchiverBuilder addExtensionClasspathFile(final Collection<Artifact> artifacts,
             final String targetDirectory) throws ArchiverException {
         for (Artifact artifact : artifacts) {
-            if (!artifact.isOptional()) {
-                addExtensionClasspathFile(artifact.getFile(), targetDirectory);
-            }
+            addExtensionClasspathFile(artifact.getFile(), targetDirectory);
         }
         return this;
     }

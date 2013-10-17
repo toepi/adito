@@ -7,7 +7,6 @@ import javax.xml.bind.JAXB;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -24,6 +23,7 @@ import org.sonatype.aether.resolution.DependencyResolutionException;
  * @goal adito-extension
  * @phase package
  * @requiresDependencyResolution runtime
+ * @threadSafe true
  */
 public class AditoExtensionMojo extends AbstractMojo {
 

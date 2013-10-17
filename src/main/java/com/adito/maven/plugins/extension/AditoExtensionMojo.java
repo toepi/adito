@@ -133,15 +133,15 @@ public class AditoExtensionMojo extends AbstractMojo {
             throw new MojoExecutionException(String.format("Error assembling extension: %s", ex.getMessage()), ex);
         } catch (IOException ex) {
             throw new MojoExecutionException(String.format("Error assembling extension: %s", ex.getMessage()), ex);
-        } catch (DependencyResolutionRequiredException ex) {
-            throw new MojoExecutionException(String.format("Error assembling extension: %s", ex.getMessage()), ex);
         } catch (DependencyResolutionException ex) {
+            throw new MojoExecutionException(String.format("Error assembling extension: %s", ex.getMessage()), ex);
+        } catch (DependencyResolutionRequiredException ex) {
             throw new MojoExecutionException(String.format("Error assembling extension: %s", ex.getMessage()), ex);
         }
     }
 
     private void performPackaging() throws ArchiverException, ManifestException,
-            IOException, DependencyResolutionRequiredException, DependencyResolutionException {
+            IOException, DependencyResolutionException, DependencyResolutionRequiredException {
         final File jarFile;
         if (createJar) {
             jarFile = createJarFile();
@@ -168,16 +168,15 @@ public class AditoExtensionMojo extends AbstractMojo {
     }
 
     private File createJarFile() throws IOException, ManifestException,
-            DependencyResolutionRequiredException, ArchiverException {
-        final File result = getOutputFile("jar");
+            ArchiverException, DependencyResolutionRequiredException {
         final MavenArchiver archiver = new MavenArchiver();
         archiver.setArchiver(jarArchiver);
-        archiver.setOutputFile(result);
+        archiver.setOutputFile(getOutputFile("jar"));
         if (getClassesDirectory().exists()) {
             jarArchiver.addDirectory(getClassesDirectory());
         }
         archiver.createArchive(project, archive);
-        return result;
+        return archiver.getArchiver().getDestFile();
     }
 
     private File getOutputFile(final String extension) {

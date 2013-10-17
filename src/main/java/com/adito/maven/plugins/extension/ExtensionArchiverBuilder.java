@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXB;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
@@ -103,7 +102,7 @@ class ExtensionArchiverBuilder {
     }
 
     public File createArchive(final MavenProject project) throws ArchiverException,
-            ManifestException, DependencyResolutionRequiredException, IOException {
+            ManifestException, IOException {
         File file = null;
         try {
             if (extension != null) {

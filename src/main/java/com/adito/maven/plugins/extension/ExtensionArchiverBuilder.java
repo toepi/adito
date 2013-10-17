@@ -127,7 +127,7 @@ class ExtensionArchiverBuilder {
         return file;
     }
 
-    ExtensionArchiverBuilder addExtensionBundle(final ExtensionBundle extension) {
+    public ExtensionArchiverBuilder addExtensionBundle(final ExtensionBundle extension) {
         this.extension = extension;
         return this;
     }

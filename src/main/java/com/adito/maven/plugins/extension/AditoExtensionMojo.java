@@ -7,6 +7,7 @@ import javax.xml.bind.JAXB;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -112,16 +113,17 @@ public class AditoExtensionMojo extends AbstractMojo {
     private String finalname;
     /**
      * @component
+     * @required
      */
     private MavenProjectHelper projectHelper;
     /**
      * @parameter default-value="${repositorySystemSession}"
      * @readonly
      */
-    private RepositorySystemSession session;
+    private RepositorySystemSession repositorySession;
 
     public AditoExtensionMojo() {
-        this.archive = new MavenArchiveConfiguration();        
+        this.archive = new MavenArchiveConfiguration();
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -142,29 +144,27 @@ public class AditoExtensionMojo extends AbstractMojo {
 
     private void performPackaging() throws ArchiverException, ManifestException,
             IOException, DependencyResolutionException, DependencyResolutionRequiredException {
-        final File jarFile;
+        final ProjectDependencyResolver depResolver = new ProjectDependencyResolver(repositorySession, project);
+        final File extensionZip = new ExtensionArchiverBuilder(extensionName, extensionArchiver, getOutputFile("zip"))
+                .addExtensionDirectory(getExtensionSourceDirectory())
+                .addExtensionClasspathFile(createJar(), "private")
+                .addExtensionClasspathFile(depResolver.getCompileArtifacts(), "private")
+                .addExtensionDirectory(getWebappDirectory(), "webapp")
+                .addExtensionBundle(getExtension())
+                .createArchive(project);
+        projectHelper.attachArtifact(project, "zip", extensionZip);
+    }
+
+    private File createJar() throws ArchiverException, IOException,
+            ManifestException, DependencyResolutionRequiredException {
+        File jarFile;
         if (createJar) {
             jarFile = createJarFile();
             projectHelper.attachArtifact(project, "jar", jarFile);
         } else {
             jarFile = null;
         }
-        final ExtensionBundle extension;
-        if (writeClasspath) {
-            final File extesionXmlFile = new File(getExtensionSourceDirectory(), "extension.xml");
-            extension = JAXB.unmarshal(extesionXmlFile, ExtensionBundle.class);
-        } else {
-            extension = null;
-        }
-        final ProjectDependencyResolver depResolver = new ProjectDependencyResolver(session, project);
-        final File extensionZip = new ExtensionArchiverBuilder(extensionName, extensionArchiver, getOutputFile("zip"))
-                .addExtensionDirectory(getExtensionSourceDirectory())
-                .addExtensionClasspathFile(jarFile, "private")
-                .addExtensionClasspathFile(depResolver.getCompileArtifacts(), "private")
-                .addExtensionDirectory(getWebappDirectory(), "webapp")
-                .addExtensionBundle(extension)
-                .createArchive(project);
-        projectHelper.attachArtifact(project, "zip", extensionZip);
+        return jarFile;
     }
 
     private File createJarFile() throws IOException, ManifestException,
@@ -177,6 +177,17 @@ public class AditoExtensionMojo extends AbstractMojo {
         }
         archiver.createArchive(project, archive);
         return archiver.getArchiver().getDestFile();
+    }
+
+    private ExtensionBundle getExtension() {
+        ExtensionBundle extension;
+        if (writeClasspath) {
+            final File extesionXmlFile = new File(getExtensionSourceDirectory(), "extension.xml");
+            extension = JAXB.unmarshal(extesionXmlFile, ExtensionBundle.class);
+        } else {
+            extension = null;
+        }
+        return extension;
     }
 
     private File getOutputFile(final String extension) {

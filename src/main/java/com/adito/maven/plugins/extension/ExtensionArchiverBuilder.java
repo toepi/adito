@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXB;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.ArchiveEntry;
+import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
@@ -35,7 +37,9 @@ class ExtensionArchiverBuilder {
     public ExtensionArchiverBuilder(final String extensionName,
             final ZipArchiver archiver, final File destFile) {
         this.archiver = archiver;
-        this.archiver.setDestFile(destFile);
+        archiver.setDestFile(destFile);
+        archiver.setCompress(true);
+        archiver.setDuplicateBehavior(ZipArchiver.DUPLICATES_ADD);
         this.extensionName = extensionName;
         classpathEntries = new HashSet<String>();
     }

@@ -101,7 +101,7 @@ public class AditoExtensionMojo extends AbstractMojo {
     /**
      * Write/Rewrite Classpath.
      *
-     * @parameter default-value="false"
+     * @parameter default-value="true"
      */
     private boolean writeClasspath;
     /**

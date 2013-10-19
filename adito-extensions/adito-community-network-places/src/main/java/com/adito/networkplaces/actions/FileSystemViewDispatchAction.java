@@ -39,7 +39,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileType;
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -1405,7 +1404,7 @@ public class FileSystemViewDispatchAction extends AbstractPopupAuthenticatedDisp
             }
         }
         else{
-            errs.add(Globals.ERROR_KEY, new ActionError("vfs.paste.from.clipboard.no.copy"));
+            errs.add(Globals.ERROR_KEY, new ActionMessage("vfs.paste.from.clipboard.no.copy"));
             this.saveErrors(request, errs);
         }
 	}

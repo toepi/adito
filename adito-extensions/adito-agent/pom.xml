@@ -187,6 +187,7 @@
                 <version>0.9.2-SNAPSHOT</version>
                 <configuration>
                     <createJar>false</createJar>
+                    <writeClasspath>false</writeClasspath>
                     <extensionSourceDirectory>${project.build.extensionSourceDirectory}</extensionSourceDirectory>
                 </configuration>
             </plugin>

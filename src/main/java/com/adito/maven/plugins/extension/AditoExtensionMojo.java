@@ -7,6 +7,7 @@ import javax.xml.bind.JAXB;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -113,6 +114,14 @@ public class AditoExtensionMojo extends AbstractMojo {
      * @component @required
      */
     private MavenProjectHelper projectHelper;
+    /**
+     * The Maven Session
+     *
+     * @required
+     * @readonly
+     * @parameter expression="${session}"
+     */
+    private MavenSession session;
 
     public AditoExtensionMojo() {
         this.archive = new MavenArchiveConfiguration();
@@ -164,7 +173,7 @@ public class AditoExtensionMojo extends AbstractMojo {
         if (getClassesDirectory().exists()) {
             jarArchiver.addDirectory(getClassesDirectory());
         }
-        archiver.createArchive(project, archive);
+        archiver.createArchive(session, project, archive);
         return archiver.getArchiver().getDestFile();
     }
 

@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,7 +16,6 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.tunnels;
 
 import static org.junit.Assert.assertEquals;
@@ -60,19 +58,19 @@ public class TunnelsTests extends AbstractTestPolicyEnabledResource<Tunnel> {
     @Override
     public Tunnel createResource(Tunnel tunnel) throws Exception {
         return getTunnelService().createTunnel(tunnel.getRealmID(), tunnel.getResourceName(), tunnel.getResourceDescription(), tunnel.getType(), tunnel.isAutoStart(),
-            tunnel.getTransport(), tunnel.getUsername(), tunnel.getSourcePort(), tunnel.getDestination(), tunnel.getSourceInterface()); 
+                tunnel.getTransport(), tunnel.getUsername(), tunnel.getSourcePort(), tunnel.getDestination(), tunnel.getSourceInterface());
     }
-    
+
     @Override
     public Tunnel updateResource(Tunnel tunnel) throws Exception {
         getTunnelService().updateTunnel(tunnel.getResourceId(), tunnel.getResourceName(), tunnel.getResourceDescription(), tunnel.getType(), tunnel.isAutoStart(),
-            tunnel.getTransport(), tunnel.getUsername(), tunnel.getSourcePort(), tunnel.getDestination(), tunnel.getSourceInterface());
-        return getTunnelService().getTunnel(tunnel.getResourceId()); 
+                tunnel.getTransport(), tunnel.getUsername(), tunnel.getSourcePort(), tunnel.getDestination(), tunnel.getSourceInterface());
+        return getTunnelService().getTunnel(tunnel.getResourceId());
     }
-    
+
     @Override
     public ResourceType getResourceType() throws Exception {
-      return TunnelPlugin.SSL_TUNNEL_RESOURCE_TYPE;
+        return TunnelPlugin.SSL_TUNNEL_RESOURCE_TYPE;
     }
 
     @Override
@@ -84,20 +82,20 @@ public class TunnelsTests extends AbstractTestPolicyEnabledResource<Tunnel> {
     public Tunnel getResource(Tunnel resource) throws Exception {
         return getTunnelService().getTunnel(resource.getResourceId());
     }
-    
+
     protected static TunnelDatabase getTunnelService() throws Exception {
         return TunnelDatabaseFactory.getInstance();
     }
-    
+
     @Override
     public List<Tunnel> getAllResources() throws Exception {
         return getTunnelService().getTunnels();
     }
-    
+
     @Test
     public void createUncommonTunnel() throws Exception {
-        DefaultTunnel tunnel = new DefaultTunnel(-1, "à2à£$-_=+$%%^", "à2à-_=+2à£$", -1, 0, false,
-            "à2à£$-_=+$%%^w", "à2à£$%$%%^grre-_=+", 8080, new HostService("localhost"), null, Calendar.getInstance(), Calendar.getInstance());
+        DefaultTunnel tunnel = new DefaultTunnel(-1, "Ã 2Ã Â£$-_=+$%%^", "Ã 2Ã -_=+2Ã Â£$", -1, 0, false,
+                "Ã 2Ã Â£$-_=+$%%^w", "Ã 2Ã Â£$%$%%^grre-_=+", 8080, new HostService("localhost"), null, Calendar.getInstance(), Calendar.getInstance());
         assertEquals("There should not be any Tunnel", 0, getTunnelService().getTunnels().size());
         Tunnel createdTunnel = createResource(tunnel);
         assertEquals("There should not be any Tunnel", 1, getTunnelService().getTunnels().size());

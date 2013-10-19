@@ -8,13 +8,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXB;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.ArchiveEntry;
-import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
-import org.sonatype.aether.artifact.Artifact;
 
 /**
  *

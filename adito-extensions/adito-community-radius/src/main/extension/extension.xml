@@ -19,30 +19,8 @@
 
 	<plugin name="adito-community-radius" 
 		class="com.adito.radius.RADIUSPlugin">
-			<classpath>
-				private/adito-community-radius.jar
-			</classpath>
-			<classpath>
-				private/gnu-crypto.jar
-			</classpath>
-			<classpath>
-				private/jradius-dictionary.jar
-			</classpath>
-			<classpath>
-				private/jradius.jar
-			</classpath>
-			<classpath>
-				private/commons-chain-1.0.jar
-			</classpath>
-			<classpath>
-				private/commons-configuration-1.1.jar
-			</classpath>
-			<classpath>
-				private/java-getopt-1.0.10.jar
-			</classpath>
-			<classpath>
-				private/ipdr.jar
-			</classpath>
+			<classpath>private/gnu-crypto.jar </classpath>
+			<classpath>private/ipdr.jar </classpath>
 			<resources>webapp</resources>	
 		</plugin>
 		

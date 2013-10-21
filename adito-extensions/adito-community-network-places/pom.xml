@@ -25,7 +25,7 @@
             <artifactId>jsch</artifactId>
             <version>0.1.50</version>
         </dependency>
-        <!-- currently extension plugin copy direct deps only -->
+        <!-- optional dependency for jsch -->
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jzlib</artifactId>

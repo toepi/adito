@@ -26,9 +26,6 @@
 
 		<plugin name="adito-community-activedirectory"
 			class="com.adito.activedirectory.ActiveDirectoryCommunityPlugin">
-			<classpath>
-				private/adito-community-activedirectory.jar
-			</classpath>
 			<resources>webapp</resources>
 		</plugin>
 

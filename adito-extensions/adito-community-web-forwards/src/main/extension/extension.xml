@@ -24,9 +24,6 @@
 		</description>
 		<plugin name="adito-community-web-forwards"
 			class="com.adito.webforwards.WebForwardPlugin">
-			<classpath>
-				private/adito-community-web-forwards.jar
-			</classpath>
 			<resources>webapp</resources>
 		</plugin>
 		<propertyDefinitions>

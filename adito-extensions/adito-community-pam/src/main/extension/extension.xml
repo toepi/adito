@@ -20,8 +20,6 @@
 
 		<plugin name="adito-community-pam"
 			class="com.adito.pam.PAMCommunityPlugin">
-			<classpath>private/adito-community-pam.jar</classpath>
-                        <classpath>private/jpam-1.1.jar</classpath>
 			<resources>webapp</resources>
 		</plugin>
 

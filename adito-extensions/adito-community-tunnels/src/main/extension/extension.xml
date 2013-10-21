@@ -13,9 +13,6 @@
 		</description>
 		<plugin name="adito-community-tunnels"
 			class="com.adito.tunnels.TunnelPlugin">
-			<classpath>
-				private/adito-community-tunnels.jar
-			</classpath>
 			<resources>webapp</resources>
 		</plugin>
 		<propertyDefinitions></propertyDefinitions>

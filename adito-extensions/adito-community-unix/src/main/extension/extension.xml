@@ -19,8 +19,6 @@
 
 		<plugin name="adito-community-unix"
 			class="com.adito.community.unix.UNIXCommunityPlugin">
-			<classpath>private/adito-community-unix.jar</classpath>
-                        <classpath>private/commons-codec-1.8.jar</classpath>
 			<resources>webapp</resources>
 		</plugin>
 

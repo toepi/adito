@@ -36,9 +36,6 @@
 		</description>
 		<plugin name="adito-community-applications"
 			class="com.adito.applications.ApplicationsPlugin">
-			<classpath>
-				private/adito-community-applications.jar
-			</classpath>
 			<resources>webapp</resources>
 		</plugin>
 		<propertyDefinitions>

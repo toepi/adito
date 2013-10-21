@@ -136,7 +136,7 @@
             <url>https://github.com/toepi/adito-mvn-repo/raw/master</url>
             <snapshots>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
+                <updatePolicy>interval:60</updatePolicy>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
@@ -147,7 +147,7 @@
             <url>https://github.com/toepi/adito-mvn-repo/raw/master</url>
             <snapshots>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
+                <updatePolicy>interval:60</updatePolicy>
             </snapshots>
         </repository>
     </repositories>

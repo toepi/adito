@@ -1,4 +1,3 @@
-
 <bundle version="1.0.17" 
 	requiredHostVersion="0.9.0"
 	id="adito-community-ldap"
@@ -26,14 +25,10 @@
 
 		<plugin name="adito-community-ldap"
 			class="com.adito.ldap.LdapCommunityPlugin">
-			<classpath>
-				private/adito-community-ldap.jar
-			</classpath>
 			<resources>webapp</resources>
 		</plugin>
 
 		<propertyDefinitions>
-
 			<realmProperties>
 				<category id="90" bundle="ldap"
 					image="categories/active-directory.gif" parent="1030" />

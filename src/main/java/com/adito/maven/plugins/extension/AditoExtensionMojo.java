@@ -1,6 +1,6 @@
 package com.adito.maven.plugins.extension;
 
-import com.adito.extension.ExtensionBundle;
+import com.adito.extension.Bundle;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.bind.JAXB;
@@ -177,11 +177,11 @@ public class AditoExtensionMojo extends AbstractMojo {
         return archiver.getArchiver().getDestFile();
     }
 
-    private ExtensionBundle getExtension() {
-        ExtensionBundle extension;
+    private Bundle getExtension() {
+        final Bundle extension;
         if (writeClasspath) {
             final File extesionXmlFile = new File(getExtensionSourceDirectory(), "extension.xml");
-            extension = JAXB.unmarshal(extesionXmlFile, ExtensionBundle.class);
+            extension = JAXB.unmarshal(extesionXmlFile, Bundle.class);
         } else {
             extension = null;
         }

@@ -1,6 +1,6 @@
 package com.adito.maven.plugins.extension;
 
-import com.adito.extension.ExtensionBundle;
+import com.adito.extension.Bundle;
 import com.adito.extension.PluginType;
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,7 @@ class ExtensionArchiverBuilder {
     private final String extensionName;
     private final ZipArchiver archiver;
     private final Set<String> classpathEntries;
-    private ExtensionBundle extension;
+    private Bundle extension;
 
     public ExtensionArchiverBuilder(final String extensionName,
             final ZipArchiver archiver, final File destFile) {
@@ -131,7 +131,7 @@ class ExtensionArchiverBuilder {
         return file;
     }
 
-    public ExtensionArchiverBuilder addExtensionBundle(final ExtensionBundle extension) {
+    public ExtensionArchiverBuilder addExtensionBundle(final Bundle extension) {
         this.extension = extension;
         return this;
     }

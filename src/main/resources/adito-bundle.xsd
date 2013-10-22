@@ -4,20 +4,20 @@
             xmlns:bundle="http://adito.com/extension/bundle/V1"
             elementFormDefault="unqualified">
 
-    <xsd:element name="bundle" type="bundle:ExtensionBundle"/> 
-
-    <xsd:complexType name="ExtensionBundle">        
-        <xsd:sequence>
-            <xsd:element name="description" maxOccurs="1" minOccurs="1" type="xsd:string"/>
-            <xsd:element name="install" maxOccurs="1" minOccurs="1" type="bundle:ExtensionInstall"/>
-            <xsd:element name="extension" maxOccurs="1" minOccurs="1" type="bundle:ExtensionDescription"/>
-        </xsd:sequence>
-        <xsd:attribute name="version" type="xsd:string" use="required"/>
-        <xsd:attribute name="requiredHostVersion" type="xsd:string" use="required"/>
-        <xsd:attribute name="id" type="xsd:string" use="required"/>
-        <xsd:attribute name="name" type="xsd:string" use="required"/>
-        <xsd:anyAttribute/>
-    </xsd:complexType>
+    <xsd:element name="bundle">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="description" maxOccurs="1" minOccurs="1" type="xsd:string"/>
+                <xsd:element name="install" maxOccurs="1" minOccurs="1" type="bundle:ExtensionInstall"/>
+                <xsd:element name="extension" maxOccurs="1" minOccurs="1" type="bundle:ExtensionDescription"/>
+            </xsd:sequence>
+            <xsd:attribute name="version" type="xsd:string" use="required"/>
+            <xsd:attribute name="requiredHostVersion" type="xsd:string" use="required"/>
+            <xsd:attribute name="id" type="xsd:string" use="required"/>
+            <xsd:attribute name="name" type="xsd:string" use="required"/>
+            <xsd:anyAttribute/>
+        </xsd:complexType>
+    </xsd:element>
     
     <xsd:complexType name="ExtensionInstall">
         <xsd:sequence>

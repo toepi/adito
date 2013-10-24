@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,78 +16,80 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.server;
 
+import com.adito.boot.ContextHolder;
+import com.adito.boot.Util;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Server;
 
-import com.adito.boot.ContextHolder;
-import com.adito.boot.Util;
-
 public class StatsLogger extends Thread {
-	final static Log log = LogFactory.getLog(StatsLogger.class);
-	
-	private Server server;
-	private int update;
-	
-	public StatsLogger(Server server, int update) {
-		super("StatsLogger");
-		server.setStatsOn(true);
-		setDaemon(true);
-		this.server = server;
-		this.update = update;
-		start();
-	}
 
-	public void run() {
-		FileOutputStream out = null;
-		try {
-			out = new FileOutputStream(new File(ContextHolder.getContext().getLogDirectory(), "stats.csv"));
-			PrintWriter pw = new PrintWriter(out, true);
-			pw.println("connections,connectionsOpen,connectionsOpenMax,connectionsDurationAve," + "connectionsDurationMax,connectionsRequestsAve,connectionsRequestsMax,"
-				+ "errors,requests,requestsActive,requestsActiveMax,requestsDurectionAve,requestsDurationMax");
-			StringBuffer sb = new StringBuffer();
-			while (true) {
-				sb.append(server.getConnections());
-				sb.append(",");
-				sb.append(server.getConnectionsOpen());
-				sb.append(",");
-				sb.append(server.getConnectionsOpenMax());
-				sb.append(",");
-				sb.append(server.getConnectionsDurationAve());
-				sb.append(",");
-				sb.append(server.getConnectionsDurationMax());
-				sb.append(",");
-				sb.append(server.getConnectionsRequestsAve());
-				sb.append(",");
-				sb.append(server.getConnectionsRequestsMax());
-				sb.append(",");
-				sb.append(server.getErrors());
-				sb.append(",");
-				sb.append(server.getRequests());
-				sb.append(",");
-				sb.append(server.getRequestsActive());
-				sb.append(",");
-				sb.append(server.getRequestsActiveMax());
-				sb.append(",");
-				sb.append(server.getRequestsDurationAve());
-				sb.append(",");
-				sb.append(server.getRequestsDurationMax());
-				pw.println(sb.toString());
-				sb.setLength(0);
-				Thread.sleep(update);
-			}
-		} catch (Exception e) {
-			log.error("Failed to create stats files.", e);
-		} finally {
-			Util.closeStream(out);
-		}
-	}
+    private static final Log LOG = LogFactory.getLog(StatsLogger.class);
+
+    private final Server server;
+    private final int update;
+
+    public StatsLogger(Server server, int update) {
+        super("StatsLogger");
+        this.server = server;
+        this.update = update;
+        server.setStatsOn(true);
+        setDaemon(true);
+        start();
+    }
+
+    @Override
+    public void run() {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(new File(ContextHolder.getContext().getLogDirectory(), "stats.csv"));
+            PrintWriter pw = new PrintWriter(out, true);
+            pw.println("connections,connectionsOpen,connectionsOpenMax,connectionsDurationAve," + "connectionsDurationMax,connectionsRequestsAve,connectionsRequestsMax,"
+                    + "errors,requests,requestsActive,requestsActiveMax,requestsDurectionAve,requestsDurationMax");
+            StringBuilder sb = new StringBuilder();
+            while (true) {
+                sb.append(server.getConnections());
+                sb.append(",");
+                sb.append(server.getConnectionsOpen());
+                sb.append(",");
+                sb.append(server.getConnectionsOpenMax());
+                sb.append(",");
+                sb.append(server.getConnectionsDurationAve());
+                sb.append(",");
+                sb.append(server.getConnectionsDurationMax());
+                sb.append(",");
+                sb.append(server.getConnectionsRequestsAve());
+                sb.append(",");
+                sb.append(server.getConnectionsRequestsMax());
+                sb.append(",");
+                sb.append(server.getErrors());
+                sb.append(",");
+                sb.append(server.getRequests());
+                sb.append(",");
+                sb.append(server.getRequestsActive());
+                sb.append(",");
+                sb.append(server.getRequestsActiveMax());
+                sb.append(",");
+                sb.append(server.getRequestsDurationAve());
+                sb.append(",");
+                sb.append(server.getRequestsDurationMax());
+                pw.println(sb.toString());
+                sb.setLength(0);
+                Thread.sleep(update);
+            }
+        } catch (FileNotFoundException e) {
+            LOG.error("Failed to create stats files.", e);
+        } catch (InterruptedException e) {
+            LOG.error("Failed to create stats files.", e);
+        } finally {
+            Util.closeStream(out);
+        }
+    }
 
 }

@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,28 +16,24 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.server.jetty;
 
+import com.adito.boot.RequestHandlerResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-
 import javax.servlet.http.Cookie;
-
 import org.mortbay.http.HttpResponse;
-
-import com.adito.boot.RequestHandlerResponse;
 
 public class ResponseAdapter implements RequestHandlerResponse {
 
-    private HttpResponse response;
+    private final HttpResponse response;
 
     public ResponseAdapter(HttpResponse response) {
         this.response = response;
     }
-    
+
     public HttpResponse getHttpResponse() {
-    	return response;
+        return response;
     }
 
     public void setField(String header, String value) {
@@ -50,8 +45,9 @@ public class ResponseAdapter implements RequestHandlerResponse {
     }
 
     public void addCookie(Cookie cookie) {
-    	response.addSetCookie(cookie);
+        response.addSetCookie(cookie);
     }
+
     public void sendError(int code, String message) throws IOException {
         response.sendError(code, message);
 
@@ -82,9 +78,8 @@ public class ResponseAdapter implements RequestHandlerResponse {
     public OutputStream getOutputStream() {
         return response.getOutputStream();
     }
-    
+
     public void setCharacterEncoding(String charset) {
         response.setCharacterEncoding(charset, true);
     }
-
 }

@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,67 +16,7 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.server;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.net.Authenticator;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.NetworkInterface;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-
-import javax.net.ssl.TrustManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.NCSARequestLog;
-import org.mortbay.http.ResourceCache;
-import org.mortbay.http.SocketListener;
-import org.mortbay.http.handler.MsieSslHandler;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.jetty.servlet.ServletHttpRequest;
-import org.mortbay.jetty.servlet.ServletHttpResponse;
-import org.mortbay.jetty.servlet.SessionManager;
-import org.mortbay.util.LifeCycleEvent;
-import org.mortbay.util.LifeCycleListener;
-import org.mortbay.util.Password;
-import org.tanukisoftware.wrapper.WrapperListener;
-import org.tanukisoftware.wrapper.WrapperManager;
 
 import com.adito.boot.BootProgressMonitor;
 import com.adito.boot.Branding;
@@ -102,46 +41,105 @@ import com.adito.boot.StopContextListenerThread;
 import com.adito.boot.SystemProperties;
 import com.adito.boot.Util;
 import com.adito.boot.VersionInfo;
-import com.adito.boot.XMLPropertyDefinition;
 import com.adito.boot.VersionInfo.Version;
+import com.adito.boot.XMLPropertyDefinition;
 import com.adito.server.jetty.CustomHttpContext;
 import com.adito.server.jetty.CustomJsseListener;
 import com.adito.server.jetty.CustomWebApplicationContext;
 import com.adito.server.jetty.HTTPRedirectHandler;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.Authenticator;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import javax.net.ssl.TrustManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.mortbay.http.HttpContext;
+import org.mortbay.http.JsseListener;
+import org.mortbay.http.NCSARequestLog;
+import org.mortbay.http.ResourceCache;
+import org.mortbay.http.SocketListener;
+import org.mortbay.http.handler.MsieSslHandler;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.servlet.ServletHttpRequest;
+import org.mortbay.jetty.servlet.ServletHttpResponse;
+import org.mortbay.jetty.servlet.SessionManager;
+import org.mortbay.util.LifeCycleEvent;
+import org.mortbay.util.LifeCycleListener;
+import org.mortbay.util.Password;
+import org.tanukisoftware.wrapper.WrapperListener;
+import org.tanukisoftware.wrapper.WrapperManager;
 
 /**
  * <p>
- * Provides an entry point and a default environment for starting the
- * Adito service.
- * 
+ * Provides an entry point and a default environment for starting the Adito
+ * service.
+ *
  * <p>
- * Adito is primarily a standard Java web application. However, it
- * requires a few additional services from the container that it is running in.
- * This environment is called the {@link com.adito.boot.Context} (see this
- * interfaces Javadoc for more information about this environment) and this
- * class implements that interface.
- * 
+ * Adito is primarily a standard Java web application. However, it requires a
+ * few additional services from the container that it is running in. This
+ * environment is called the {@link com.adito.boot.Context} (see this interfaces
+ * Javadoc for more information about this environment) and this class
+ * implements that interface.
+ *
  * <p>
  * This class currently provides an implementation that uses Jetty for the
  * servlet / JSP container.
- * 
+ *
  * <p>
  * The <i>Context Properties</b> are stored using the Java Preferences API so
  * will likely end up in the Windows register on Win32 platforms or XML files
  * everywhere else.
- * 
+ *
  * @see com.adito.boot.Context
  */
 public class Main implements WrapperListener, Context {
-    // Private statics
 
+    private static final Log LOG = LogFactory.getLog(Main.class);
     private static File DB_DIR = new File("db");
     private static File CONF_DIR = new File("conf");
     private static File TMP_DIR = new File("tmp");
-    private static File LOG_DIR = new File("logs");
+    private static final File LOG_DIR = new File("logs");
     private static File appDir = null;
 
-    static Log log;
     static Preferences PREF;
     static ClassLoader bootLoader;
 
@@ -181,14 +179,7 @@ public class Main implements WrapperListener, Context {
         Main.bootLoader = bootLoader;
     }
 
-    /**
-     * Entry point
-     * 
-     * @param args
-     * @throws Throwable
-     */
     public static void main(String[] args) throws Throwable {
-
         // This is a hack to allow the Install4J installer to get the java
         // runtime that will be used
         if (args.length > 0 && args[0].equals("--jvmdir")) {
@@ -212,13 +203,16 @@ public class Main implements WrapperListener, Context {
                         if (SystemProperties.get("os.name").toLowerCase().startsWith("windows")) {
                             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                         }
-                    } catch (Exception e) {
+                    } catch (ClassNotFoundException e) {
+                    } catch (InstantiationException e) {
+                    } catch (IllegalAccessException e) {
+                    } catch (UnsupportedLookAndFeelException e) {
                     }
                     String mesg = main.startupException.getMessage() == null ? "No message supplied." : main.startupException
-                                    .getMessage();
-                    StringBuffer buf = new StringBuffer();
+                            .getMessage();
+                    StringBuilder buf = new StringBuilder();
                     int l = 0;
-                    char ch = ' ';
+                    char ch;
                     for (int i = 0; i < mesg.length(); i++) {
                         ch = mesg.charAt(i);
                         if (l > 50 && ch == ' ') {
@@ -244,6 +238,7 @@ public class Main implements WrapperListener, Context {
                 System.exit(returnCode.intValue());
             } else {
                 Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
                     public void run() {
                         if (!main.shuttingDown) {
                             main.stop(0);
@@ -254,11 +249,6 @@ public class Main implements WrapperListener, Context {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.tanukisoftware.wrapper.WrapperListener#start(java.lang.String[])
-     */
     public Integer start(String[] args) {
         startupStarted = System.currentTimeMillis();
 
@@ -280,7 +270,10 @@ public class Main implements WrapperListener, Context {
         if (gui) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception e) {
+            } catch (ClassNotFoundException e) {
+            } catch (InstantiationException e) {
+            } catch (IllegalAccessException e) {
+            } catch (UnsupportedLookAndFeelException e) {
             }
             bootProgressMonitor = new SwingBootProgressMonitor();
         } else {
@@ -302,7 +295,7 @@ public class Main implements WrapperListener, Context {
         try {
             if (!newPrefDir.exists() && Preferences.systemRoot().node("/com").nodeExists("adito")) {
                 Preferences from = Preferences.systemRoot().node("/com/adito");
-                log.warn("Migrating preferences");
+                LOG.warn("Migrating preferences");
                 try {
                     copyNode(from.node("core"), PREF.node("core"));
                     from.node("core").removeNode();
@@ -312,26 +305,26 @@ public class Main implements WrapperListener, Context {
                     from.node("extensions").removeNode();
                     copyNode(from.node("dbupgrader"), PREF.node("dbupgrader"));
                     from.node("dbupgrader").removeNode();
-                } catch (Exception e) {
-                    log.error("Failed to migrate preferences.", e);
+                } catch (BackingStoreException e) {
+                    LOG.error("Failed to migrate preferences.", e);
                 }
                 try {
                     from.flush();
                 } catch (BackingStoreException bse) {
-                    log.error("Failed to flush old preferences");
+                    LOG.error("Failed to flush old preferences");
                 }
                 try {
                     PREF.flush();
                 } catch (BackingStoreException bse) {
-                    log.error("Failed to flush new preferences");
+                    LOG.error("Failed to flush new preferences");
                 }
-                if (log.isInfoEnabled()) {
-                    log.info("Flushing preferences");
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Flushing preferences");
                 }
 
             }
         } catch (BackingStoreException bse) {
-            log.error("Failed to migrate preferences.", bse);
+            LOG.error("Failed to migrate preferences.", bse);
         }
 
         // Inform the wrapper the startup process is going ok
@@ -344,13 +337,13 @@ public class Main implements WrapperListener, Context {
             try {
                 hostname = Inet4Address.getLocalHost().getCanonicalHostName();
                 hostAddress = Inet4Address.getLocalHost().getHostAddress();
-            } catch (Exception ex) {
+            } catch (UnknownHostException ex) {
                 // This should be fatal, we now rely on the hostname being
                 // available
                 throw new Exception("The host name or address on which this service is running could not "
-                                + "be determined. Check you network configuration. One possible cause is "
-                                + "a misconfigured 'hosts' file (e.g. on UNIX-like systems this would be "
-                                + "/etc/hosts, on Windows XP it would be " + "C:\\Windows\\System32\\Drivers\\Etc\\Hosts).");
+                        + "be determined. Check you network configuration. One possible cause is "
+                        + "a misconfigured 'hosts' file (e.g. on UNIX-like systems this would be "
+                        + "/etc/hosts, on Windows XP it would be " + "C:\\Windows\\System32\\Drivers\\Etc\\Hosts).");
             }
 
             PropertyClassManager.getInstance().registerPropertyClass(contextConfiguration = new ContextConfig(getClass().getClassLoader()));
@@ -372,21 +365,21 @@ public class Main implements WrapperListener, Context {
             PropertyList l = contextConfiguration.retrievePropertyList(new ContextKey("webServer.bindAddress"));
             getBootProgressMonitor().updateMessage("Creating server lock");
             getBootProgressMonitor().updateProgress(6);
-            serverLock = new ServerLock((String) l.get(0));
+            serverLock = new ServerLock(l.get(0));
             if (serverLock.isLocked()) {
                 if (!isSetupMode()) {
                     if (serverLock.isSetup()) {
                         throw new Exception("The installation wizard is currently running. "
-                                        + "Please shut this down by pointing your browser " + "to http://" + getHostname() + ":"
-                                        + serverLock.getPort() + "/showShutdown.do before attempting to start the server again.");
+                                + "Please shut this down by pointing your browser " + "to http://" + getHostname() + ":"
+                                + serverLock.getPort() + "/showShutdown.do before attempting to start the server again.");
                     } else {
                         throw new Exception("The server is already running.");
                     }
                 } else {
                     if (!serverLock.isSetup()) {
                         throw new Exception("The server is currently already running. "
-                                        + "Please shut this down by pointing your browser " + "to https://" + getHostname() + ":"
-                                        + serverLock.getPort() + "/showShutdown.do before attempting to start the server again.");
+                                + "Please shut this down by pointing your browser " + "to https://" + getHostname() + ":"
+                                + serverLock.getPort() + "/showShutdown.do before attempting to start the server again.");
                     } else {
                         throw new Exception("The installation wizard is running..");
                     }
@@ -401,6 +394,7 @@ public class Main implements WrapperListener, Context {
             }
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
                 public void run() {
                     serverLock.stop();
                 }
@@ -419,63 +413,54 @@ public class Main implements WrapperListener, Context {
                 normalMode();
                 startHttpServer();
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             startupException = t;
-            log.error("Failed to start the server. " + t.getMessage(), t);
+            LOG.error("Failed to start the server. " + t.getMessage(), t);
             return new Integer(1);
         }
 
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getConfig()
-     */
     public PropertyClass getConfig() {
         return contextConfiguration;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.tanukisoftware.wrapper.WrapperListener#controlEvent(int)
-     */
     public void controlEvent(int evt) {
         if (evt == WrapperManager.WRAPPER_CTRL_C_EVENT) {
-            if (log.isInfoEnabled())
-                log.info("Got CTRL+C event");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Got CTRL+C event");
+            }
             WrapperManager.stop(0);
         } else if (evt == WrapperManager.WRAPPER_CTRL_CLOSE_EVENT) {
-            if (log.isInfoEnabled())
-                log.info("Got windows close event, ignoring.");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Got windows close event, ignoring.");
+            }
         } else if (evt == WrapperManager.WRAPPER_CTRL_LOGOFF_EVENT) {
-            if (log.isInfoEnabled())
-                log.info("Got windows logoff event, ignoring.");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Got windows logoff event, ignoring.");
+            }
         } else if (evt == WrapperManager.WRAPPER_CTRL_SHUTDOWN_EVENT) {
-            if (log.isInfoEnabled())
-                log.info("Got shutdown event");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Got shutdown event");
+            }
             WrapperManager.stop(0);
         } else {
-            if (log.isInfoEnabled())
-                log.info("Got unknown control event " + evt + ", ignoring.");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Got unknown control event " + evt + ", ignoring.");
+            }
         }
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.tanukisoftware.wrapper.WrapperListener#stop(int)
-     */
     public int stop(int exitCode) {
-        if (log != null) {
-            if (log.isInfoEnabled()) {
-                if (restarting)
-                    log.info("Restarting the server.");
-                else
-                    log.info("Shutting down the server.");
+        if (LOG != null) {
+            if (LOG.isInfoEnabled()) {
+                if (restarting) {
+                    LOG.info("Restarting the server.");
+                } else {
+                    LOG.info("Shutting down the server.");
+                }
             }
         }
         if (useWrapper) {
@@ -487,9 +472,10 @@ public class Main implements WrapperListener, Context {
             try {
                 server.stop(false);
             } catch (InterruptedException e) {
-                if (log != null) {
-                    if (log.isInfoEnabled())
-                        log.info("Failed to stop server.", e);
+                if (LOG != null) {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Failed to stop server.", e);
+                    }
                 }
             }
         }
@@ -500,19 +486,19 @@ public class Main implements WrapperListener, Context {
         }
 
         // 
-        if (log.isInfoEnabled()) {
-            log.info("Flushing preferences");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Flushing preferences");
         }
         try {
             ContextHolder.getContext().getPreferences().flush();
         } catch (BackingStoreException bse) {
-            log.error("Failed to flush context preferences.", bse);
+            LOG.error("Failed to flush context preferences.", bse);
         }
         try {
             Preferences.systemRoot().flush();
-        } catch(IllegalStateException ise) {
+        } catch (IllegalStateException ise) {
         } catch (BackingStoreException bse) {
-            log.error("Failed to flush system preferences");
+            LOG.error("Failed to flush system preferences");
         }
 
         return exitCode;
@@ -522,9 +508,9 @@ public class Main implements WrapperListener, Context {
         getBootProgressMonitor().updateMessage("Loading context properties");
         getBootProgressMonitor().updateProgress(4);
         for (Enumeration<URL> e = getClass().getClassLoader().getResources("META-INF/contextConfig-definitions.xml"); e
-                        .hasMoreElements();) {
+                .hasMoreElements();) {
             URL u = e.nextElement();
-            log.info("Loading context property definitions from " + u);
+            LOG.info("Loading context property definitions from " + u);
             SAXBuilder build = new SAXBuilder();
             Element root = build.build(u).getRootElement();
             if (!root.getName().equals("definitions")) {
@@ -537,7 +523,7 @@ public class Main implements WrapperListener, Context {
                     contextConfiguration.registerPropertyDefinition(def);
                 } else {
                     throw new JDOMException("Expect root element of <definitions> with child elements of <definition>. Got <"
-                                    + c.getName() + ">.");
+                            + c.getName() + ">.");
                 }
             }
         }
@@ -546,40 +532,25 @@ public class Main implements WrapperListener, Context {
 
     void copyNode(Preferences from, Preferences to) throws BackingStoreException {
         String[] keys = from.keys();
-        for (int i = 0; i < keys.length; i++) {
-            to.put(keys[i], from.get(keys[i], ""));
+        for (String key : keys) {
+            to.put(key, from.get(key, ""));
         }
         String childNodes[] = from.childrenNames();
-        for (int i = 0; i < childNodes.length; i++) {
-            Preferences cn = from.node(childNodes[i]);
-            Preferences tn = to.node(childNodes[i]);
+        for (String childNode : childNodes) {
+            Preferences cn = from.node(childNode);
+            Preferences tn = to.node(childNode);
             copyNode(cn, tn);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#isSetupMode()
-     */
     public boolean isSetupMode() {
         return install;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#isRestartAvailableMode()
-     */
     public boolean isRestartAvailableMode() {
         return (useDevConfig || useWrapper) && !isSetupMode();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#shutdown(boolean)
-     */
     public void shutdown(boolean restart) {
         shuttingDown = true;
         restarting = restart;
@@ -596,87 +567,42 @@ public class Main implements WrapperListener, Context {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getVersion()
-     */
     public Version getVersion() {
         return VersionInfo.getVersion();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getConfDirectory()
-     */
     public File getConfDirectory() {
         return CONF_DIR;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getTempDirectory()
-     */
     public File getTempDirectory() {
         return TMP_DIR;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getLogDirectory()
-     */
     public File getLogDirectory() {
         return LOG_DIR;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getApplicationDirectory()
-     */
     public File getApplicationDirectory() {
         return appDir == null ? new File(getTempDirectory(), "extensions") : appDir;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getDBDirectory()
-     */
     public File getDBDirectory() {
         return DB_DIR;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getMainThread()
-     */
     public Thread getMainThread() {
         return mainThread;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#setResourceAlias(java.lang.String,
-     *      java.lang.String)
-     */
     public void setResourceAlias(String uri, String location) {
         webappContext.setResourceAlias(uri, location);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#addResourceBase(java.net.URL)
-     */
     public void addResourceBase(URL base) {
-        if (log.isInfoEnabled())
-            log.info("Adding new resource base " + base.toExternalForm());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Adding new resource base " + base.toExternalForm());
+        }
         ResourceCache cache = new ResourceCache();
         cache.setMimeMap(webappContext.getMimeMap());
         cache.setEncodingMap(webappContext.getEncodingMap());
@@ -689,67 +615,38 @@ public class Main implements WrapperListener, Context {
             }
             resourceCaches.put(base, cache);
         } catch (Exception e) {
-            log.error("Failed to add new resource base " + base.toExternalForm() + ".", e);
+            LOG.error("Failed to add new resource base " + base.toExternalForm() + ".", e);
         }
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#addResourceBase(java.net.URL)
-     */
     public void removeResourceBase(URL base) {
-        if (log.isInfoEnabled())
-            log.info("Removing resource base " + base.toExternalForm());
-        ResourceCache cache = (ResourceCache) resourceCaches.get(base);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Removing resource base " + base.toExternalForm());
+        }
+        ResourceCache cache = resourceCaches.get(base);
         webappContext.removeResourceCache(cache);
         if (httpContext != null) {
             httpContext.removeResourceCache(cache);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getHostname()
-     */
     public String getHostname() {
         return hostname;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getPort()
-     */
     public int getPort() {
         return actualPort;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#addContextLoaderURL(java.net.URL)
-     */
     public void addContextLoaderURL(URL url) {
         doAddContextLoaderURL(url);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#registerRequestHandler(com.adito.boot.RequestHandler)
-     */
     public void registerRequestHandler(RequestHandler requestHandler) {
         registerRequestHandler(requestHandler, HandlerProtocol.HTTPS_PROTOCOL);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#deregisterRequestHandler(com.adito.boot.RequestHandler)
-     */
     public void deregisterRequestHandler(RequestHandler requestHandler) {
         if (httpContext != null) {
             httpContext.deregisterRequestHandler(requestHandler);
@@ -761,42 +658,41 @@ public class Main implements WrapperListener, Context {
         getBootProgressMonitor().updateMessage("Registering key stores");
         getBootProgressMonitor().updateProgress(7);
         String defaultKeyStorePassword = contextConfiguration.retrieveProperty(new ContextKey(
-                        "webServer.keystore.sslCertificate.password"));
+                "webServer.keystore.sslCertificate.password"));
         KeyStoreManager.registerKeyStore(KeyStoreManager.DEFAULT_KEY_STORE, "keystore", true, defaultKeyStorePassword,
-            KeyStoreManager.getKeyStoreType(contextConfiguration.retrieveProperty(new ContextKey("webServer.keyStoreType"))));
+                KeyStoreManager.getKeyStoreType(contextConfiguration.retrieveProperty(new ContextKey("webServer.keyStoreType"))));
 
         KeyStoreManager.registerKeyStore(KeyStoreManager.SERVER_AUTHENTICATION_CERTIFICATES_KEY_STORE, "keystore", true,
-            "adito", KeyStoreManager.TYPE_JKS);
+                "adito", KeyStoreManager.TYPE_JKS);
         KeyStoreManager.registerKeyStore(KeyStoreManager.TRUSTED_SERVER_CERTIFICATES_KEY_STORE, "keystore", true, "adito",
-            KeyStoreManager.TYPE_JKS);
+                KeyStoreManager.TYPE_JKS);
 
     }
 
     private void clearTemp() {
         String currVer = PREF.get("lastTempClear", "");
-        if (currVer.equals("") || !currVer.equals(getVersion().toString())
-                        || "true".equalsIgnoreCase(SystemProperties.get("adito.clearTemp"))) {
+        if (currVer.length() == 0 || !currVer.equals(getVersion().toString())
+                || "true".equalsIgnoreCase(SystemProperties.get("adito.clearTemp"))) {
             getBootProgressMonitor().updateMessage("Clearing temporary files");
             getBootProgressMonitor().updateProgress(3);
-            if (log.isInfoEnabled())
-                log.info("Clearing temporary directory");
-            
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Clearing temporary directory");
+            }
+
             /* We have to leave the server.run and server.pid files alone as these are
              * used by external components to determine service state 
-             */ 
-            
+             */
             File[] files = getTempDirectory().listFiles();
-            if(files != null) {
-                for(File file : files) {
-                    if(!file.getName().equals(ServerLock.LOCK_NAME) &&
-                                    !file.getName().equals(Branding.SERVICE_NAME + ".pid")) {
+            if (files != null) {
+                for (File file : files) {
+                    if (!file.getName().equals(ServerLock.LOCK_NAME)
+                            && !file.getName().equals(Branding.SERVICE_NAME + ".pid")) {
                         Util.delTree(file);
                     }
                 }
-            }
-            else {
+            } else {
                 if (!getTempDirectory().mkdirs()) {
-                    log.error("CRITICAL. Failed to create the temporary directory " + getTempDirectory() + ".");
+                    LOG.error("CRITICAL. Failed to create the temporary directory " + getTempDirectory() + ".");
                 }
             }
         }
@@ -804,7 +700,7 @@ public class Main implements WrapperListener, Context {
     }
 
     private void initialiseLogging() {
-        URL resource =  bootLoader.getResource("log4j.properties");
+        URL resource = bootLoader.getResource("log4j.properties");
         getBootProgressMonitor().updateMessage("Intialising logging");
         getBootProgressMonitor().updateProgress(2);
         LOG_DIR.mkdirs();
@@ -816,32 +712,37 @@ public class Main implements WrapperListener, Context {
             in = resource.openStream();
             Properties p = new Properties();
             p.load(in);
-            p.setProperty("log4j.rootCategory", p.getProperty("log4j.rootCategory", "WARN,logfile") + ( logToConsole ? ",stdout" : "" ));
-            Class.forName("org.apache.log4j.PropertyConfigurator", true, bootLoader).getMethod("configure", new Class[] { Properties.class })
-                            .invoke(null, new Object[] { p });
-        } catch (Exception e) {
+            p.setProperty("log4j.rootCategory", p.getProperty("log4j.rootCategory", "WARN,logfile") + (logToConsole ? ",stdout" : ""));
+            Class.forName("org.apache.log4j.PropertyConfigurator", true, bootLoader).getMethod("configure", new Class[]{Properties.class})
+                    .invoke(null, new Object[]{p});
+        } catch (IOException e) {
+        } catch (ClassNotFoundException e) {
+        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException e) {
+        } catch (NoSuchMethodException e) {
+        } catch (SecurityException e) {
+        } catch (InvocationTargetException e) {
         } finally {
             Util.closeStream(in);
         }
-        log = LogFactory.getLog(Main.class);
     }
 
     private void startHttpServer() throws Exception {
-
         int port = contextConfiguration.retrievePropertyInt(new ContextKey("webServer.httpRedirectPort"));
         if (port <= 0) {
-            if (log.isInfoEnabled())
-                log.info("HTTP redirect port " + port + " is invalid");
+            if (LOG.isInfoEnabled()) {
+                LOG.info("HTTP redirect port " + port + " is invalid");
+            }
             return;
         }
-        
+
         String bind = contextConfiguration.retrieveProperty(new ContextKey("webServer.bindAddress"));
-        PropertyList l = new PropertyList(bind.equals("") ? "0.0.0.0" : bind);
+        PropertyList l = new PropertyList(bind.length() == 0 ? "0.0.0.0" : bind);
         insecureServer = new Server();
-        for (Iterator<String> i = l.iterator(); i.hasNext();) {
-            String address = i.next();
-            if (log.isInfoEnabled())
-                log.info("Adding listener on " + address + ":" + port);
+        for (String address : l) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Adding listener on " + address + ":" + port);
+            }
             SocketListener listener = new SocketListener();
             listener.setHost(address);
             listener.setPort(port);
@@ -853,7 +754,7 @@ public class Main implements WrapperListener, Context {
             listener.setPoolName("P2");
             insecureServer.addListener(listener);
         }
-        
+
         // Create the webapp
         HttpContext context = new HttpContext();
         context.setContextPath("/");
@@ -865,18 +766,20 @@ public class Main implements WrapperListener, Context {
         insecureServer.setRequestsPerGC(2000);
 
         insecureThread = new Thread(threadGroup, "InsecureWebServer") {
+            @Override
             public void run() {
                 // Start the server
                 try {
                     insecureServer.start();
                 } catch (Exception e) {
-                    log.warn("Failed to start HTTP Jetty. " + e.getMessage(), e);
+                    LOG.warn("Failed to start HTTP Jetty. " + e.getMessage(), e);
                 }
             }
         };
 
-        if (log.isInfoEnabled())
-            log.info("Starting HTTP redirect server");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Starting HTTP redirect server");
+        }
         insecureThread.start();
 
     }
@@ -886,36 +789,37 @@ public class Main implements WrapperListener, Context {
         getBootProgressMonitor().updateMessage("Creating server");
         getBootProgressMonitor().updateProgress(8);
 
-        if (log.isInfoEnabled())
-            log.info("Starting Jetty Web Server");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Starting Jetty Web Server");
+        }
 
         server = createServer();
 
         // SunJsseListener listener = new SunJsseListener();
         String keystorePassword = contextConfiguration
-                        .retrieveProperty(new ContextKey("webServer.keystore.sslCertificate.password"));
-        if (keystorePassword.equals("")) {
+                .retrieveProperty(new ContextKey("webServer.keystore.sslCertificate.password"));
+        if (keystorePassword.length() == 0) {
             throw new Exception(
-                            "Private key / certificate password has not been set. Please run the Installation Wizard.");
+                    "Private key / certificate password has not been set. Please run the Installation Wizard.");
         }
 
         actualPort = defaultPort == -1 ? contextConfiguration.retrievePropertyInt(new ContextKey("webServer.port")) : defaultPort;
         String bind = contextConfiguration.retrieveProperty(new ContextKey("webServer.bindAddress"));
         listeners = new ArrayList<SocketListener>();
-        PropertyList l = new PropertyList(bind.equals("") ? "0.0.0.0" : bind);
-        for (Iterator<String> i = l.iterator(); i.hasNext();) {
-            String address = i.next();
-            if (log.isInfoEnabled())
-                log.info("Adding listener on " + address + ":" + actualPort);
+        PropertyList l = new PropertyList(bind.length() == 0 ? "0.0.0.0" : bind);
+        for (String address : l) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Adding listener on " + address + ":" + actualPort);
+            }
             if (!serverLock.isStarted()) {
                 serverLock.start(actualPort);
             }
             SocketListener listener = null;
             if (contextConfiguration.retrieveProperty(new ContextKey("webServer.protocol")).equals("http")) {
                 listener = new SocketListener();
-                log.warn("The server is configured to listen for plain HTTP connections.");
+                LOG.warn("The server is configured to listen for plain HTTP connections.");
             } else {
-                listener = new CustomJsseListener(keystorePassword);
+                listener = new CustomJsseListener();
                 MsieSslHandler sslHandler = new MsieSslHandler();
                 sslHandler.setUserAgentSubString("MSIE 5");
                 listener.setHttpHandler(sslHandler);
@@ -932,11 +836,11 @@ public class Main implements WrapperListener, Context {
             listeners.add(listener);
 
             listener.setLowResourcePersistTimeMs(contextConfiguration.retrievePropertyInt(new ContextKey(
-                            "webServer.lowResourcePersistTimeMs")));
+                    "webServer.lowResourcePersistTimeMs")));
             listener.setPoolName("main");
             server.addListener(listener);
         }
-        
+
         // Add the context
         getBootProgressMonitor().updateMessage("Creating web application");
         getBootProgressMonitor().updateProgress(9);
@@ -978,18 +882,19 @@ public class Main implements WrapperListener, Context {
         }
 
         mainThread = new Thread(threadGroup, "WebServer") {
+            @Override
             public void run() {
                 // Start the server
                 try {
                     server.start();
                     if (useDevConfig) {
-                        log.warn("Server startup took " + ((System.currentTimeMillis() - startupStarted) / 1000) + " seconds");
+                        LOG.warn("Server startup took " + ((System.currentTimeMillis() - startupStarted) / 1000) + " seconds");
                     }
                     getBootProgressMonitor().updateMessage("Server is now running");
                     getBootProgressMonitor().updateProgress(100);
                     Thread.sleep(2000);
                 } catch (Exception e) {
-                    log.error("Failed to start Jetty. " + e.getMessage(), e);
+                    LOG.error("Failed to start Jetty. " + e.getMessage(), e);
                     if (useWrapper) {
                         WrapperManager.stop(1);
                     } else {
@@ -1003,23 +908,16 @@ public class Main implements WrapperListener, Context {
         mainThread.start();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#addWebApp(java.lang.String,
-     *      java.lang.String)
-     */
     public void addWebApp(String path, String warFile) throws Exception {
-        log.info("Adding webapp '" + path + "' using path / war '" + warFile + "'");
+        LOG.info("Adding webapp '" + path + "' using path / war '" + warFile + "'");
         HttpContext context = server.addWebApplication(path, warFile);
         context.start();
     }
 
     private void setupMode() throws Exception {
+        // Ensure that https redirect is not turned on in jetty
+        System.setProperty("jetty.force.HTTPSRedirect", "false");
 
-    	// Ensure that https redirect is not turned on in jetty
-    	System.setProperty("jetty.force.HTTPSRedirect", "false");
-    	
         getBootProgressMonitor().updateMessage("Creating server");
         getBootProgressMonitor().updateProgress(8);
 
@@ -1037,13 +935,6 @@ public class Main implements WrapperListener, Context {
         socketListener.setAcceptQueueSize(0);
         socketListener.setPoolName("P1");
         server.addListener(socketListener);
-
-        // // Add the context
-        // HttpContext context = new CustomHttpContext(server, "/",
-        // useDevConfig);
-        // server.addContext(context);
-
-        // Create the webapp
 
         getBootProgressMonitor().updateMessage("Creating web application");
         getBootProgressMonitor().updateProgress(9);
@@ -1078,6 +969,7 @@ public class Main implements WrapperListener, Context {
         }
 
         mainThread = new Thread(threadGroup, "WebServer") {
+            @Override
             public void run() {
                 // Start the server
                 try {
@@ -1087,20 +979,20 @@ public class Main implements WrapperListener, Context {
                         try {
                             BrowserLauncher.openURL("http://" + fRealHostname + ":" + realPort);
                             System.out.println("A browser has been opened and pointed to http://" + fRealHostname + ":" + realPort
-                                            + ". ");
-                        } catch (Exception ex) {
+                                    + ". ");
+                        } catch (IOException ex) {
                             System.out.println("Point your browser to http://" + fRealHostname + ":" + realPort + ". ");
                         }
                     } else {
                         System.out.println("Point your browser to http://" + fRealHostname + ":" + realPort + ". ");
                     }
                     System.out
-                                    .println("\nPress CTRL+C or use the 'Shutdown' option from the web interface to leave the installation wizard.");
+                            .println("\nPress CTRL+C or use the 'Shutdown' option from the web interface to leave the installation wizard.");
                     getBootProgressMonitor().updateMessage("Server is now running");
                     getBootProgressMonitor().updateProgress(100);
                     Thread.sleep(2000);
                 } catch (Exception e) {
-                    log.error("Failed to start Jetty. " + e.getMessage(), e);
+                    LOG.error("Failed to start Jetty. " + e.getMessage(), e);
                     if (useWrapper) {
                         WrapperManager.stop(1);
                     } else {
@@ -1119,7 +1011,6 @@ public class Main implements WrapperListener, Context {
          * Wait for up to 5 minutes for the server to become available we need
          * to wait this long because precompilation can take a while!
          */
-
         int waitFor = 60 * 5;
 
         boolean running = false;
@@ -1132,10 +1023,10 @@ public class Main implements WrapperListener, Context {
                     Socket s = new Socket(realHostname, realPort);
                     s.close();
                     running = true;
-                } catch (Exception ex) {
+                } catch (IOException ex) {
                     try {
                         Thread.sleep(1000);
-                    } catch (Exception ex2) {
+                    } catch (InterruptedException ex2) {
                     }
                 }
             }
@@ -1158,9 +1049,10 @@ public class Main implements WrapperListener, Context {
         getBootProgressMonitor().updateProgress(5);
 
         String httpProxyHost = contextConfiguration.retrieveProperty(new ContextKey("proxies.http.proxyHost"));
-        if (!httpProxyHost.equals("")) {
-            if (log.isInfoEnabled())
-                log.info("Configuring outgoing HTTP connections to use a proxy server.");
+        if (httpProxyHost.length() != 0) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Configuring outgoing HTTP connections to use a proxy server.");
+            }
             System.setProperty("http.proxyHost", httpProxyHost);
             System.setProperty("com.maverick.ssl.https.HTTPProxyHostname", httpProxyHost);
             String httpProxyPort = contextConfiguration.retrieveProperty(new ContextKey("proxies.http.proxyPort"));
@@ -1171,16 +1063,18 @@ public class Main implements WrapperListener, Context {
             System.setProperty("http.proxyPort", httpProxyPort);
             System.setProperty("com.maverick.ssl.https.HTTPProxyPort", httpProxyPort);
 
-            if (!httpProxyUsername.trim().equals(""))
+            if (httpProxyUsername.trim().length() != 0) {
                 System.setProperty("com.maverick.ssl.https.HTTPProxyUsername", httpProxyUsername.trim());
+            }
 
-            if (!httpProxyPassword.trim().equals(""))
+            if (httpProxyPassword.trim().length() != 0) {
                 System.setProperty("com.maverick.ssl.https.HTTPProxyPassword", httpProxyPassword.trim());
+            }
 
             System.setProperty("com.maverick.ssl.https.HTTPProxySecure", "false");
 
             PropertyList list = contextConfiguration.retrievePropertyList(new ContextKey("proxies.http.nonProxyHosts"));
-            StringBuffer hosts = new StringBuffer();
+            StringBuilder hosts = new StringBuilder();
             for (Iterator i = list.iterator(); i.hasNext();) {
                 if (hosts.length() != 0) {
                     hosts.append("|");
@@ -1191,23 +1085,24 @@ public class Main implements WrapperListener, Context {
             System.setProperty("com.maverick.ssl.https.HTTPProxyNonProxyHosts", hosts.toString());
         }
         String socksProxyHost = contextConfiguration.retrieveProperty(new ContextKey("proxies.socksProxyHost"));
-        if (!socksProxyHost.equals("")) {
-            if (log.isInfoEnabled())
-                log.info("Configuring outgoing TCP/IP connections to use a SOCKS proxy server.");
+        if (socksProxyHost.length() != 0) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Configuring outgoing TCP/IP connections to use a SOCKS proxy server.");
+            }
             System.setProperty("socksProxyHost", httpProxyHost);
             System.setProperty("socksProxyPort", contextConfiguration.retrieveProperty(new ContextKey("proxies.socksProxyPort")));
         }
-        if (!socksProxyHost.equals("") || !httpProxyHost.equals("")) {
+        if (socksProxyHost.length() != 0 || httpProxyHost.length() != 0) {
             Authenticator.setDefault(new ProxyAuthenticator());
         }
     }
 
     private Server createServer() throws MalformedURLException {
-        Server server = new Server();
+        Server result = new Server();
         if (contextConfiguration.retrievePropertyBoolean(new ContextKey("webServer.stats"))) {
-            new StatsLogger(server, contextConfiguration.retrievePropertyInt(new ContextKey("webServer.statsUpdate")));
+            new StatsLogger(result, contextConfiguration.retrievePropertyInt(new ContextKey("webServer.statsUpdate")));
         }
-        return server;
+        return result;
     }
 
     private void addLifecycleListener(final CustomWebApplicationContext context) {
@@ -1237,58 +1132,56 @@ public class Main implements WrapperListener, Context {
 
     private void displaySystemInfo() throws SocketException {
 
-        //
-
         if (useDevConfig) {
-            log.warn("Development environment enabled. Do not use this on a production server.");
+            LOG.warn("Development environment enabled. Do not use this on a production server.");
         }
 
-        if (log.isInfoEnabled()) {
-           	log.info("Version is " + ContextHolder.getContext().getVersion());
-            log.info("Java version is " + SystemProperties.get("java.version"));
-            log.info("Server is installed on " + hostname + "/" + hostAddress);
-            log.info("Configuration: " + CONF_DIR.getAbsolutePath());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Version is " + ContextHolder.getContext().getVersion());
+            LOG.info("Java version is " + SystemProperties.get("java.version"));
+            LOG.info("Server is installed on " + hostname + "/" + hostAddress);
+            LOG.info("Configuration: " + CONF_DIR.getAbsolutePath());
         }
 
-        if(SystemProperties.get("java.vm.name", "").indexOf("GNU") > -1
-        		|| SystemProperties.get("java.vm.name", "").indexOf("libgcj") > -1) 
-        {
-        	System.out.println("********** WARNING **********");
-        	System.out.println("The system has detected that the Java runtime is GNU/GCJ");
-        	System.out.println("Adito does not work correctly with this Java runtime");
-        	System.out.println("you should reconfigure with a different runtime");
-        	System.out.println("*****************************");
-        	
-        	
-        	log.warn("********** WARNING **********");
-        	log.warn("The system has detected that the Java runtime is GNU/GCJ");
-        	log.warn("Adito may not work correctly with this Java runtime");
-        	log.warn("you should reconfigure with a different runtime");
-        	log.warn("*****************************");
+        if (SystemProperties.get("java.vm.name", "").indexOf("GNU") > -1
+                || SystemProperties.get("java.vm.name", "").indexOf("libgcj") > -1) {
+            System.out.println("********** WARNING **********");
+            System.out.println("The system has detected that the Java runtime is GNU/GCJ");
+            System.out.println("Adito does not work correctly with this Java runtime");
+            System.out.println("you should reconfigure with a different runtime");
+            System.out.println("*****************************");
+
+            LOG.warn("********** WARNING **********");
+            LOG.warn("The system has detected that the Java runtime is GNU/GCJ");
+            LOG.warn("Adito may not work correctly with this Java runtime");
+            LOG.warn("you should reconfigure with a different runtime");
+            LOG.warn("*****************************");
 
         }
-        
+
         Enumeration e = NetworkInterface.getNetworkInterfaces();
 
         while (e.hasMoreElements()) {
             NetworkInterface netface = (NetworkInterface) e.nextElement();
-            if (log.isInfoEnabled())
-                log.info("Net interface: " + netface.getName());
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Net interface: " + netface.getName());
+            }
 
             Enumeration e2 = netface.getInetAddresses();
 
             while (e2.hasMoreElements()) {
                 InetAddress ip = (InetAddress) e2.nextElement();
-                if (log.isInfoEnabled())
-                    log.info("IP address: " + ip.toString());
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("IP address: " + ip.toString());
+                }
             }
         }
 
-        if (log.isInfoEnabled())
-            log.info("System properties follow:");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("System properties follow:");
+        }
         Properties sysProps = System.getProperties();
-        for (Iterator i = sysProps.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
+        for (Map.Entry entry : sysProps.entrySet()) {
             int idx = 0;
             String val = (String) entry.getValue();
             while (true) {
@@ -1296,18 +1189,21 @@ public class Main implements WrapperListener, Context {
                     StringTokenizer t = new StringTokenizer(entry.getValue().toString(), SystemProperties.get("path.separator", ","));
                     while (t.hasMoreTokens()) {
                         String s = t.nextToken();
-                        if (log.isInfoEnabled())
-                            log.info("java.class.path=" + s);
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("java.class.path=" + s);
+                        }
                     }
                     break;
                 } else {
                     if ((val.length() - idx) > 256) {
-                        if (log.isInfoEnabled())
-                            log.info("  " + entry.getKey() + "=" + val.substring(idx, idx + 256));
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("  " + entry.getKey() + "=" + val.substring(idx, idx + 256));
+                        }
                         idx += 256;
                     } else {
-                        if (log.isInfoEnabled())
-                            log.info("  " + entry.getKey() + "=" + val.substring(idx));
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("  " + entry.getKey() + "=" + val.substring(idx));
+                        }
                         break;
                     }
                 }
@@ -1344,9 +1240,9 @@ public class Main implements WrapperListener, Context {
                 }
             }
         }
-        
+
         /**
-         * Set the prefix if any. 
+         * Set the prefix if any.
          */
         SystemProperties.setPrefix(System.getProperty("boot.propertyPrefix"));
 
@@ -1372,58 +1268,57 @@ public class Main implements WrapperListener, Context {
         String os = System.getProperty("os.name").toLowerCase();
         gui = "true".equals(System.getProperty("adito.useDevConfig")) && os.startsWith("windows");
         try {
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].equals("--manager")) {
+            for (String arg : args) {
+                if (arg.equals("--manager")) {
                     System.err
-                                    .println("The database manager can no longer be started via the server command line. Run it directly from hsqldb.jar ensuring you have the webapp classes included in your class path.");
+                            .println("The database manager can no longer be started via the server command line. Run it directly from hsqldb.jar ensuring you have the webapp classes included in your class path.");
                     return new Integer(1);
-                } else if (args[i].equals("--setup")) {
+                } else if (arg.equals("--setup")) {
                     System.err.println("WARNING: --setup is deprecated, please use --install");
                     install = true;
-                } else if (args[i].equals("--install")) {
+                } else if (arg.equals("--install")) {
                     install = true;
-                } else if (args[i].equals("--logToConsole")) {
+                } else if (arg.equals("--logToConsole")) {
                     logToConsole = true;
-                } else if (args[i].equals("--gui")) {
+                } else if (arg.equals("--gui")) {
                     if (os.startsWith("windows")) {
                         gui = true;
                     } else if (os.equals("linux") || os.equals("solaris") || os.endsWith("aix")) {
                         String displaySysProp = SystemProperties.get("adito.display", "");
                         String display = null;
                         try {
-                            display = displaySysProp.equals("") ? System.getenv("DISPLAY") : displaySysProp;
+                            display = displaySysProp.length() == 0 ? System.getenv("DISPLAY") : displaySysProp;
                         } catch (Throwable t) {
                         }
                         gui = display != null && display.length() > 0;
                     }
-                } else if (args[i].startsWith("--db")) {
-                    DB_DIR = new File(args[i].substring(5));
+                } else if (arg.startsWith("--db")) {
+                    DB_DIR = new File(arg.substring(5));
                     if (DB_DIR.exists() && !DB_DIR.isDirectory()) {
                         throw new Exception("--db option specifies an existing file, must either not exist or be a directory");
                     }
-                } else if (args[i].startsWith("--applications")) {
-                    appDir = new File(args[i].substring(15));
+                } else if (arg.startsWith("--applications")) {
+                    appDir = new File(arg.substring(15));
                     if (appDir.exists() && !appDir.isDirectory()) {
                         throw new Exception("--db option specifies an existing file, must either not exist or be a directory");
                     }
-                } else if (args[i].startsWith("--temp")) {
-                    TMP_DIR = new File(args[i].substring(7));
+                } else if (arg.startsWith("--temp")) {
+                    TMP_DIR = new File(arg.substring(7));
                     if (TMP_DIR.exists() && !TMP_DIR.isDirectory()) {
                         throw new Exception("--temp option specifies an existing file, must either not exist or be a directory");
                     }
-                } else if (args[i].startsWith("--conf")) {
-                    CONF_DIR = new File(args[i].substring(7));
+                } else if (arg.startsWith("--conf")) {
+                    CONF_DIR = new File(arg.substring(7));
                     if (!CONF_DIR.exists() || !CONF_DIR.isDirectory()) {
                         throw new Exception("--conf option does not specify a valid directory");
                     }
-                } else if (args[i].startsWith("--port")) {
-                    defaultPort = Integer.parseInt(args[i].substring(7));
-                } else if (args[i].startsWith("--jettyLog")) {
-                    jettyLog = args[i].substring(11);
-                } else if (args[i].equals("--full-reset")) {
+                } else if (arg.startsWith("--port")) {
+                    defaultPort = Integer.parseInt(arg.substring(7));
+                } else if (arg.startsWith("--jettyLog")) {
+                    jettyLog = arg.substring(11);
+                } else if (arg.equals("--full-reset")) {
                     fullReset = true;
-                } else if (args[i].startsWith("start")) {
-                    // For compatibility with the install4j launcher
+                } else if (arg.startsWith("start")) {
                 } else {
                     System.err.println("Starts / configures the server.\n");
                     System.err.println("Usage: adito [OPTION]...");
@@ -1446,7 +1341,7 @@ public class Main implements WrapperListener, Context {
                     System.out.println("                   normal mode and will overide whatever port");
                     System.out.println("                   been configured.");
                     System.out.println(" --jettyLog=LOG    The location of the Jetty NCSA request log.");
-                    System.out.println("\nInvalid option: " + args[i] + ".\n");
+                    System.out.println("\nInvalid option: " + arg + ".\n");
                     return new Integer(2);
                 }
             }
@@ -1489,8 +1384,8 @@ public class Main implements WrapperListener, Context {
     private boolean fullReset() {
         if (gui) {
             if (JOptionPane.showConfirmDialog(null, "The embedded configuration database will be\n"
-                            + "completely deleted and re-created the next\ntime you run the server. Are you absolutely\n"
-                            + "sure you wish to do this?", "Full Reset", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) != JOptionPane.OK_OPTION) {
+                    + "completely deleted and re-created the next\ntime you run the server. Are you absolutely\n"
+                    + "sure you wish to do this?", "Full Reset", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) != JOptionPane.OK_OPTION) {
                 return false;
             }
         } else {
@@ -1525,10 +1420,10 @@ public class Main implements WrapperListener, Context {
         System.out.println("Resetting all configuration");
         File[] f = getDBDirectory().listFiles();
         if (f != null) {
-            for (int i = 0; i < f.length; i++) {
-                if (!f[i].getName().equals("CVS") && !f[i].equals(".cvsignore")) {
-                    System.out.println("    Deleting " + f[i].getPath());
-                    if (!f[i].delete()) {
+            for (File f1 : f) {
+                if (!f1.getName().equals("CVS") && !f1.equals(".cvsignore")) {
+                    System.out.println("    Deleting " + f1.getPath());
+                    if (!f1.delete()) {
                         System.out.println("        Failed to remove");
                     }
                 }
@@ -1538,11 +1433,6 @@ public class Main implements WrapperListener, Context {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#deobfuscatePassword(java.lang.String)
-     */
     public String deobfuscatePassword(String val) {
         try {
             return Password.deobfuscate(val);
@@ -1551,86 +1441,51 @@ public class Main implements WrapperListener, Context {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#obfuscatePassword(java.lang.String)
-     */
     public String obfuscatePassword(String val) {
         return Password.obfuscate(val);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#setTrustManager(javax.net.ssl.TrustManager)
-     */
     public void setTrustManager(TrustManager trustManager, boolean require) {
-        if (listeners == null || listeners.size() == 0) {
-            log.warn("Not setting trust managers there are no SSL listeners configured.");
+        if (listeners == null || listeners.isEmpty()) {
+            LOG.warn("Not setting trust managers there are no SSL listeners configured.");
         } else {
-            if (log.isInfoEnabled())
-                log.info("Set trust managers");
-            for (Iterator i = listeners.iterator(); i.hasNext();) {
-                SocketListener l = (SocketListener) i.next();
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Set trust managers");
+            }
+            for (SocketListener l : listeners) {
                 if (l instanceof CustomJsseListener) {
-                    ((CustomJsseListener) l).setNeedClientAuth(trustManager != null);
+                    ((JsseListener) l).setNeedClientAuth(trustManager != null);
                     ((CustomJsseListener) l).setTrustManager(trustManager, require);
                 }
             }
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#addContextListener(com.adito.boot.ContextListener)
-     */
     public void addContextListener(ContextListener contextListener) {
         contextListeners.add(contextListener);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#removeContextListener(com.adito.boot.ContextListener)
-     */
     public void removeContextListener(ContextListener contextListener) {
         contextListeners.remove(contextListener);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getPreferences()
-     */
     public Preferences getPreferences() {
         return PREF;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getContextLoaderClassPath()
-     */
     public URL[] getContextLoaderClassPath() {
         List<URL> urlList = new ArrayList<URL>();
         ClassLoader webappContextClassLoader = webappContext.getClassLoader();
         while (webappContextClassLoader != null) {
-            if (webappContextClassLoader != null && webappContextClassLoader instanceof URLClassLoader) {
+            if (webappContextClassLoader instanceof URLClassLoader) {
                 urlList.addAll(Arrays.asList(((URLClassLoader) webappContextClassLoader).getURLs()));
             }
             webappContextClassLoader = webappContextClassLoader.getParent();
         }
-        URL[] urls = (URL[]) urlList.toArray(new URL[urlList.size()]);
+        URL[] urls = urlList.toArray(new URL[urlList.size()]);
         return urls;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getContextLoader()
-     */
     public ClassLoader getContextLoader() {
         return webappContext.getClassLoader();
     }
@@ -1639,78 +1494,73 @@ public class Main implements WrapperListener, Context {
         webappContext.removeResourceAlias(uri);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getResourceBases()
-     */
     public Collection<URL> getResourceBases() {
         return resourceCaches.keySet();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#getBootProgressMonitor()
-     */
     public BootProgressMonitor getBootProgressMonitor() {
         return bootProgressMonitor;
     }
 
     public void registerRequestHandler(RequestHandler requestHandler, HandlerProtocol protocol) {
         if (httpContext != null) {
-            if (protocol == HandlerProtocol.HTTPS_PROTOCOL || protocol == HandlerProtocol.BOTH_PROTOCOLS)
+            if (protocol == HandlerProtocol.HTTPS_PROTOCOL || protocol == HandlerProtocol.BOTH_PROTOCOLS) {
                 httpContext.registerRequestHandler(requestHandler);
+            }
         }
 
         if (protocol == HandlerProtocol.HTTP_PROTOCOL || protocol == HandlerProtocol.BOTH_PROTOCOLS) {
             HTTPRedirectHandler.registerHandler(requestHandler);
         }
-
     }
 
     public HttpServletRequest createServletRequest(RequestHandlerRequest request) {
 
         if (request instanceof com.adito.server.jetty.RequestAdapter) {
             ServletHttpRequest req = new ServletHttpRequest(servletHandler, request.getPath(),
-                            ((com.adito.server.jetty.RequestAdapter) request).getHttpRequest());
+                    ((com.adito.server.jetty.RequestAdapter) request).getHttpRequest());
             return req;
-        } else
+        } else {
             throw new IllegalArgumentException("Request must be RequestAdapter");
+        }
 
     }
 
     public HttpServletResponse createServletResponse(RequestHandlerResponse response, HttpServletRequest request) {
         if (response instanceof com.adito.server.jetty.ResponseAdapter) {
             ServletHttpResponse res = new ServletHttpResponse((ServletHttpRequest) request,
-                            ((com.adito.server.jetty.ResponseAdapter) response).getHttpResponse());
-            ((ServletHttpRequest) request).getSession(true);
+                    ((com.adito.server.jetty.ResponseAdapter) response).getHttpResponse());
+            request.getSession(true);
             return res;
-        } else
+        } else {
             throw new IllegalArgumentException("Response must be ResponseAdapter");
+        }
     }
 
     private void doAddContextLoaderURL(URL u) {
         try {
             Class sysclass = URLClassLoader.class;
-            Method method = sysclass.getDeclaredMethod("addURL", new Class[] { URL.class });
+            Method method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
             method.setAccessible(true);
-            method.invoke(webappContext.getClassLoader(), new Object[] { u });
-            if (log.isInfoEnabled())
-                log.info(u.toExternalForm() + " added to context classloader");
-        } catch (Exception e) {
-            log.error("Failed to add to classpath.", e);
+            method.invoke(webappContext.getClassLoader(), new Object[]{u});
+            if (LOG.isInfoEnabled()) {
+                LOG.info(u.toExternalForm() + " added to context classloader");
+            }
+        } catch (NoSuchMethodException e) {
+            LOG.error("Failed to add to classpath.", e);
+        } catch (SecurityException e) {
+            LOG.error("Failed to add to classpath.", e);
+        } catch (IllegalAccessException e) {
+            LOG.error("Failed to add to classpath.", e);
+        } catch (IllegalArgumentException e) {
+            LOG.error("Failed to add to classpath.", e);
+        } catch (InvocationTargetException e) {
+            LOG.error("Failed to add to classpath.", e);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.adito.boot.Context#access(javax.servlet.http.HttpSession)
-     */
     public void access(HttpSession session) {
         ((SessionManager.Session) session).access();
 
     }
-
 }

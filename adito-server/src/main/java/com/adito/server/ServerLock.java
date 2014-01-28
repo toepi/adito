@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,9 +16,10 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.server;
 
+import com.adito.boot.ContextHolder;
+import com.adito.boot.Util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,46 +32,41 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.StringTokenizer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.adito.boot.ContextHolder;
-import com.adito.boot.Util;
-
 /**
- * Used to determine if Adito (or some other server) is already running
- * under a different runtime. The check also determines if the already running
- * the installation wizard.
+ * Used to determine if Adito (or some other server) is already running under a
+ * different runtime. The check also determines if the already running the
+ * installation wizard.
  * <p>
- * This mechanism also provides a way for the server to be shutdown use a
- * scrip. Once created, the lock file is watched and if it changes to contain
- * the text "shutdown" then the server will be shutdown.
+ * This mechanism also provides a way for the server to be shutdown use a scrip.
+ * Once created, the lock file is watched and if it changes to contain the text
+ * "shutdown" then the server will be shutdown.
  */
 public class ServerLock {
-    
+
+    private static final Log log = LogFactory.getLog(ServerLock.class);
     /**
      * Name of the lock file
      */
-    public final static String LOCK_NAME = "server.run";
+    public static final String LOCK_NAME = "server.run";
 
-    final static Log log = LogFactory.getLog(ServerLock.class);
-
+    private final String bindAddress;
     private File lockFile;
     private boolean locked;
     private boolean setup;
     private int port;
-    private String bindAddress;
     private boolean started;
     private long lastLockChange;
 
     /**
      * Constructor. The lock will be searched for, and if a service is known to
      * be already running an exception is thrown.
-     * 
+     *
      * @param bindAddress address of interface server is bound to
      * @throws IOException if the service is already running
-     * 
+     *
      */
     public ServerLock(String bindAddress) throws IOException {
 
@@ -89,15 +84,15 @@ public class ServerLock {
                 lockIn = new FileInputStream(lockFile);
                 BufferedReader br = new BufferedReader(new InputStreamReader(lockIn));
                 String r = br.readLine();
-                if (r != null && !r.equals("")) {
+                if (r != null && r.length() != 0) {
                     try {
-                        if(!r.equals("shutdown") || r.equals("restart")) {
+                        if (!r.equals("shutdown") || r.equals("restart")) {
                             StringTokenizer t = new StringTokenizer(r, ":");
                             setup = "true".equals(t.nextToken());
                             port = Integer.parseInt(t.nextToken());
                             checkStatus();
                         }
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         System.err.println("Could not parse lock file.");
                         e.printStackTrace();
                     }
@@ -110,7 +105,7 @@ public class ServerLock {
 
     /**
      * Get if a service is already running.
-     * 
+     *
      * @return server is locked
      */
     public boolean isLocked() {
@@ -120,7 +115,7 @@ public class ServerLock {
     /**
      * Should be called when the service starts. This checks if a service is
      * already running, and if not creates the lock so future instances know.
-     * 
+     *
      * @param port port the service is running on
      * @throws IOException
      */
@@ -137,15 +132,15 @@ public class ServerLock {
         if (locked) {
             if (port == 443 || port == 8443) {
                 throw new IOException("Some other server is already running on port " + port + "."
-                                + "Most web servers will run on this port by default, so check if you have such "
-                                + "a service is installed (IIS, Apache or Tomcat for example). Either shutdown "
-                                + "and disable the conflicting server, or if you wish to run both services "
-                                + "concurrently, change the port number on which one listens.");
+                        + "Most web servers will run on this port by default, so check if you have such "
+                        + "a service is installed (IIS, Apache or Tomcat for example). Either shutdown "
+                        + "and disable the conflicting server, or if you wish to run both services "
+                        + "concurrently, change the port number on which one listens.");
             } else {
                 throw new IOException("Some other server is already running on port " + port + "."
-                                + "Check which other services you have enabled that may be causing "
-                                + "this conflict. Then, either disable the service, change the port on "
-                                + "which it is listening or change the port on which this server listens.");
+                        + "Check which other services you have enabled that may be causing "
+                        + "this conflict. Then, either disable the service, change the port on "
+                        + "which it is listening or change the port on which this server listens.");
 
             }
         }
@@ -156,43 +151,43 @@ public class ServerLock {
         pw.flush();
         pw.close();
         started = true;
-        
+
         lastLockChange = lockFile.lastModified();
-        
+
         /* Start watching the lock file, if it disappears then shut down the
          * server
          */
         Thread t = new Thread("ServerLockMonitor") {
+            @Override
             public void run() {
-                while(true) {
+                while (true) {
                     try {
                         Thread.sleep(5000);
-                        if(lastLockChange != lockFile.lastModified()) {
+                        if (lastLockChange != lockFile.lastModified()) {
                             lastLockChange = lockFile.lastModified();
-                            if (log.isDebugEnabled())
-                            	log.debug("Lock file changed, examining");
+                            if (log.isDebugEnabled()) {
+                                log.debug("Lock file changed, examining");
+                            }
                             InputStream in = null;
                             try {
-                                in = new FileInputStream(lockFile);;
+                                in = new FileInputStream(lockFile);
                                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
                                 String s = br.readLine();
                                 Util.closeStream(in); // close so we can delete
-                                if("shutdown".equals(s)) {
+                                if ("shutdown".equals(s)) {
                                     ContextHolder.getContext().shutdown(false);
                                     break;
-                                }
-                                else if("restart".equals(s)) {
+                                } else if ("restart".equals(s)) {
                                     ContextHolder.getContext().shutdown(true);
                                     break;
                                 }
-                            }
-                            catch(IOException ioe) {
+                            } catch (IOException ioe) {
                                 Util.closeStream(in);
                                 throw ioe;
                             }
                         }
-                    }
-                    catch(Exception e) {                        
+                    } catch (InterruptedException e) {
+                    } catch (IOException e) {
                     }
                 }
             }
@@ -200,15 +195,14 @@ public class ServerLock {
         t.setDaemon(true);
         t.setPriority(Thread.MIN_PRIORITY);
         t.start();
-        
 
     }
 
     /**
      * Get if this instance started and is running
-     * 
+     *
      * @return started
-     * 
+     *
      */
     public boolean isStarted() {
         return started;
@@ -219,15 +213,16 @@ public class ServerLock {
      * down.
      */
     public void stop() {
-    	if (log.isInfoEnabled())
-    		log.info("Removing lock");
+        if (log.isInfoEnabled()) {
+            log.info("Removing lock");
+        }
         lockFile.delete();
         started = false;
     }
 
     /**
      * Get if the currently running service is running the installation wizard.
-     * 
+     *
      * @return running installation wizard
      */
     public boolean isSetup() {
@@ -236,7 +231,7 @@ public class ServerLock {
 
     /**
      * Get the port the currently running service is running on
-     * 
+     *
      * @return port
      */
     public int getPort() {
@@ -247,23 +242,23 @@ public class ServerLock {
         Socket socket = null;
         try {
             int timeout = 5000; // 5 seconds
-            if (log.isInfoEnabled())
-            	log.info("Connecting to " + bindAddress + ":" + port + " to see if a server is already running.");
+            if (log.isInfoEnabled()) {
+                log.info("Connecting to " + bindAddress + ":" + port + " to see if a server is already running.");
+            }
             SocketAddress socketAddress = new InetSocketAddress(bindAddress, port);
             socket = new Socket();
             socket.connect(socketAddress, timeout);
             locked = true;
-        } catch (Exception e) {
+        } catch (IOException e) {
             locked = false;
         } finally {
             if (socket != null) {
                 try {
                     socket.close();
-                } catch (Exception e) {
+                } catch (IOException e) {
 
                 }
             }
         }
     }
-
 }

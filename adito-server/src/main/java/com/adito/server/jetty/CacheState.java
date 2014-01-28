@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,53 +16,35 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.server.jetty;
 
 import org.mortbay.util.Resource;
 
 public class CacheState {
-	
-	public final static int MISSING = 1;
-	public final static int FOUND = 2;
-	
-	int state;
-	String path;
-	Resource resource;
-	
-	/**
-	 * Constructor.
-	 *
-	 * @param state
-	 * @param path
-	 * @param resource
-	 */
-	public CacheState(int state, String path, Resource resource) {
-		super();
-		this.state = state;
-		this.path = path;
-		this.resource = resource;
-	}
 
-	/**
-	 * @return the path
-	 */
-	public String getPath() {
-		return path;
-	}
+    public final static int MISSING = 1;
+    public final static int FOUND = 2;
 
-	/**
-	 * @return the resource
-	 */
-	public Resource getResource() {
-		return resource;
-	}
+    int state;
+    String path;
+    Resource resource;
 
-	/**
-	 * @return the state
-	 */
-	public int getState() {
-		return state;
-	}    	
-	
+    public CacheState(int state, String path, Resource resource) {
+        super();
+        this.state = state;
+        this.path = path;
+        this.resource = resource;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    public int getState() {
+        return state;
+    }
 }

@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,34 +16,29 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.server.jetty;
 
+import com.adito.boot.RequestHandlerRequest;
+import com.adito.boot.RequestHandlerTunnel;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Map;
-
 import javax.servlet.http.Cookie;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.http.HttpRequest;
 
-import com.adito.boot.RequestHandlerRequest;
-import com.adito.boot.RequestHandlerTunnel;
-
 public class RequestAdapter implements RequestHandlerRequest {
 
-    final static Log log = LogFactory.getLog(RequestAdapter.class);
-
-    private HttpRequest request;
+    private static final Log LOG = LogFactory.getLog(RequestAdapter.class);
+    private final HttpRequest request;
 
     public RequestAdapter(HttpRequest request) {
         this.request = request;
     }
-    
+
     public HttpRequest getHttpRequest() {
-    	return request;
+        return request;
     }
 
     public String getURIEncoded() {
@@ -106,30 +100,28 @@ public class RequestAdapter implements RequestHandlerRequest {
     public void setTunnel(RequestHandlerTunnel tunnel) {
         request.getHttpConnection().setHttpTunnel(new TunnelAdapter(tunnel));
     }
-    
+
     public void setTunnel(RequestHandlerTunnel tunnel, int timeoutMs) {
         request.getHttpConnection().setHttpTunnel(new TunnelAdapter(tunnel, timeoutMs));
     }
-    
+
     public void setAttribute(String name, Object value) {
-    	request.setAttribute(name, value);
+        request.setAttribute(name, value);
     }
 
     public Object getAttribute(String name) {
-    	return request.getAttribute(name);
+        return request.getAttribute(name);
     }
-    
+
     public void setCharacterEncoding(String charset) {
         request.setCharacterEncoding(charset, false);
     }
 
+    public int getContentLength() {
+        return request.getContentLength();
+    }
 
-	public int getContentLength() {
-		return request.getContentLength();
-	}
-
-	public String getContentType() {
-		return request.getContentType();
-	}
-
+    public String getContentType() {
+        return request.getContentType();
+    }
 }

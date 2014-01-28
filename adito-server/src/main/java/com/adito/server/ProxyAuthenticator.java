@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,37 +16,33 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.server;
-
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.adito.boot.ContextHolder;
 import com.adito.boot.ContextKey;
 import com.adito.boot.PropertyClass;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * {@link java.net.Authenticator} implementation used to authenticate with
- * SOCKS and HTTP proxy servers when the Adito server tries to 
- * access web and network resources (for Replacement proxy, extension store etc).
+ * {@link java.net.Authenticator} implementation used to authenticate with SOCKS
+ * and HTTP proxy servers when the Adito server tries to access web and network
+ * resources (for Replacement proxy, extension store etc).
  */
-
 public class ProxyAuthenticator extends Authenticator {
-    final static Log log = LogFactory.getLog(ProxyAuthenticator.class);
 
-    /* (non-Javadoc)
-     * @see java.net.Authenticator#getPasswordAuthentication()
-     */
+    private static final Log LOG = LogFactory.getLog(ProxyAuthenticator.class);
+
+    @Override
     public PasswordAuthentication getPasswordAuthentication() {
-    	if (log.isInfoEnabled())
-    		log.info("Requesting " + getRequestingProtocol() + " proxy authentication for " + getRequestingSite() + " ("
-                        + getRequestingHost() + ":" + getRequestingPort() + "), prompt = " + getRequestingPrompt());
-        String user = null;
-        String pass = null;
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Requesting " + getRequestingProtocol() + " proxy authentication for " + getRequestingSite() + " ("
+                    + getRequestingHost() + ":" + getRequestingPort() + "), prompt = " + getRequestingPrompt());
+        }
+        String user;
+        String pass;
         try {
             PropertyClass contextConfiguration = ContextHolder.getContext().getConfig();
             if (getRequestingProtocol().startsWith("SOCKS")) {
@@ -57,11 +52,10 @@ public class ProxyAuthenticator extends Authenticator {
                 user = contextConfiguration.retrieveProperty(new ContextKey("proxies.http.proxyUser"));
                 pass = contextConfiguration.retrieveProperty(new ContextKey("proxies.http.proxyPassword"));
             }
-        } catch (Exception e) {
-            log.error("Failed to get proxy authentication details.");
+        } catch (IllegalArgumentException e) {
+            LOG.error("Failed to get proxy authentication details.");
             return null;
         }
         return new PasswordAuthentication(user, pass.toCharArray());
     }
-
 }

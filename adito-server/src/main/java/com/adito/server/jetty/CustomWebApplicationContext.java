@@ -1,5 +1,4 @@
-
-				/*
+/*
  *  Adito
  *
  *  Copyright (C) 2003-2006 3SP LTD. All Rights Reserved
@@ -17,7 +16,6 @@
  *  License along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-			
 package com.adito.server.jetty;
 
 import java.io.File;
@@ -27,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.http.ResourceCache;
 import org.mortbay.jetty.servlet.AbstractSessionManager;
-import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.servlet.WebApplicationContext;
 import org.mortbay.util.Resource;
 
@@ -48,19 +44,19 @@ import com.adito.boot.SystemProperties;
  * An extension to the standard Jetty
  * {@link org.mortbay.jetty.servlet.WebApplicationContext} that allows resources
  * to be loaded from multiple {@link org.mortbay.http.ResourceCache}s.
- * 
+ *
  * <p>
  * This is necessary for the plugin architecture so that plugins may register
  * their own <b>webapp</b> directories which can then be overlaid onto the
  * namespace of the main Adito webapp.
- * 
+ *
  * <p>
- * Other Adito specific webapp configuration is also performed here,
- * including setting up the special /defaultStyle.css alias that is used to
- * workaround the change to the way the CSS file is load. If this alias was not
- * set up, upgraders would have lost their CSS as /defaultStyle.css no longer
- * really exists.
- * 
+ * Other Adito specific webapp configuration is also performed here, including
+ * setting up the special /defaultStyle.css alias that is used to workaround the
+ * change to the way the CSS file is load. If this alias was not set up,
+ * upgraders would have lost their CSS as /defaultStyle.css no longer really
+ * exists.
+ *
  * <p>
  * Plugins also register new classpaths here so that any Java bytecode they may
  * require (be it in .CLASS format or .JAR format) may be loaded in the same
@@ -68,20 +64,14 @@ import com.adito.boot.SystemProperties;
  */
 public class CustomWebApplicationContext extends WebApplicationContext {
 
-    final static Log log = LogFactory.getLog(CustomWebApplicationContext.class);
-    private List<ResourceCache> resourceCaches;
-    private String additionalClasspath;
-    private List<ResourceCache> reverseCaches;
-    private Map<String, ResourceCache> resourceCacheMap;
+    private static final Log LOG = LogFactory.getLog(CustomWebApplicationContext.class);
+    private final List<ResourceCache> resourceCaches;
+    private final String additionalClasspath;
+    private final List<ResourceCache> reverseCaches;
+    private final Map<String, ResourceCache> resourceCacheMap;
+    private final Map<String, CacheState> cacheState;
     private ResourceCache mainWebappResourceCache;
-    private Map<String, CacheState> cacheState;
 
-    /**
-     * Constructor
-     * 
-     * @param useDevConfig <code>true</code> if running in development mode
-     * @throws Exception on any error
-     */
     public CustomWebApplicationContext(boolean useDevConfig, ClassLoader bootLoader) throws Exception {
         super("webapp");
         Resource webInf = getWebInf();
@@ -95,12 +85,12 @@ public class CustomWebApplicationContext extends WebApplicationContext {
         setTempDirectory(ContextHolder.getContext().getTempDirectory());
         setResourceAlias("/defaultStyle.css", "/css/defaultStyle.jsp");
         setParentClassLoader(bootLoader);
-        setWelcomeFiles(new String[] { "showHome.do" });
+        setWelcomeFiles(new String[]{"showHome.do"});
         resourceCaches = new ArrayList<ResourceCache>();
-        
-        if("true".equals(SystemProperties.get("adito.paranoidSessionManager", "true"))) {
-            ((AbstractSessionManager)getServletHandler().getSessionManager()).setUseRequestedId(false);
-            ((AbstractSessionManager)getServletHandler().getSessionManager()).setSecureCookies(true);
+
+        if ("true".equals(SystemProperties.get("adito.paranoidSessionManager", "true"))) {
+            ((AbstractSessionManager) getServletHandler().getSessionManager()).setUseRequestedId(false);
+            ((AbstractSessionManager) getServletHandler().getSessionManager()).setSecureCookies(true);
         }
     }
 
@@ -108,29 +98,22 @@ public class CustomWebApplicationContext extends WebApplicationContext {
     public void setClassPath(String classPath) {
         super.setClassPath(classPath);
         File webappBuild = new File(new File("build"), "webapp");
-        if(webappBuild.exists()) {
+        if (webappBuild.exists()) {
             addClassPath(webappBuild.toURI().toString());
         }
     }
 
-    /**
-     * Get all resource caches
-     * 
-     * @return resource caches
-     */
     public Collection<ResourceCache> getResourceCaches() {
         return resourceCaches;
     }
 
     /**
-     * <p>
      * Add a new Resource Cache. Whenever a resource is requested, this handler
      * will search all registered resource caches until one can locate it.
-     * 
      * <p>
      * This shouldn't be called directly, but through
      * {@link com.adito.boot.Context#addResourceBase(URL)}
-     * 
+     *
      * @param cache cache to add
      */
     public void addResourceCache(ResourceCache cache) {
@@ -142,14 +125,12 @@ public class CustomWebApplicationContext extends WebApplicationContext {
     }
 
     /**
-     * <p>
      * Remove a Resrouce Cache. Whenever a resource is requested, this handler
      * will no longer use this cache.
-     * 
      * <p>
      * This shouldn't be called directly, but through
      * {@link com.adito.boot.Context#removeResourceBase(URL)}
-     * 
+     *
      * @param cache cache to remove
      */
     public void removeResourceCache(ResourceCache cache) {
@@ -160,6 +141,7 @@ public class CustomWebApplicationContext extends WebApplicationContext {
         Collections.reverse(reverseCaches);
     }
 
+    @Override
     protected void addComponent(Object o) {
         if (o instanceof ResourceCache) {
             mainWebappResourceCache = ((ResourceCache) o);
@@ -167,17 +149,14 @@ public class CustomWebApplicationContext extends WebApplicationContext {
         super.addComponent(o);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.mortbay.http.ResourceCache#getResource(java.lang.String)
-     */
+    @Override
     public Resource getResource(String pathInContext) throws IOException {
         boolean fullResourceCache = SystemProperties.get("adito.fullResourceCache",
-            String.valueOf(!(SystemProperties.get("adito.useDevConfig", "false").equals("true")))).equals("true");
+                String.valueOf(!(SystemProperties.get("adito.useDevConfig", "false").equals("true")))).equals("true");
         Resource r;
-        if (log.isDebugEnabled())
-            log.debug("Request for " + pathInContext);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Request for " + pathInContext);
+        }
 
         // This is a work around to prevent WEB-INF getting listed by using the
         // path //WEB-INF
@@ -191,11 +170,13 @@ public class CustomWebApplicationContext extends WebApplicationContext {
          */
         if (fullResourceCache && cacheState.containsKey(pathInContext)) {
             r = cacheState.get(pathInContext).getResource();
-            if (log.isDebugEnabled())
-                if (r == null)
-                    log.debug("Resource " + pathInContext + " is permanently as missing.");
-                else
-                    log.debug("Resource " + pathInContext + " found in permanent cache");
+            if (LOG.isDebugEnabled()) {
+                if (r == null) {
+                    LOG.debug("Resource " + pathInContext + " is permanently as missing.");
+                } else {
+                    LOG.debug("Resource " + pathInContext + " found in permanent cache");
+                }
+            }
             return r;
         }
 
@@ -203,8 +184,7 @@ public class CustomWebApplicationContext extends WebApplicationContext {
          * Determine if the resource has already been found in a resource cache
          * (be it an extensions resource cache or the cores)
          */
-
-        ResourceCache o = fullResourceCache ? null : (ResourceCache) resourceCacheMap.get(pathInContext);
+        ResourceCache o = fullResourceCache ? null : resourceCacheMap.get(pathInContext);
         if (o == null) {
 
             /*
@@ -213,20 +193,21 @@ public class CustomWebApplicationContext extends WebApplicationContext {
              * found, store which cache it was found in for quick look up in the
              * future.
              */
-            if (log.isDebugEnabled())
-                log.debug("Resource " + pathInContext + " not found in any resource cache, checking in plugins");
-
-            for (Iterator i = reverseCaches.iterator(); i.hasNext();) {
-                ResourceCache cache = (ResourceCache) i.next();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Resource " + pathInContext + " not found in any resource cache, checking in plugins");
+            }
+            for (ResourceCache cache : reverseCaches) {
                 r = cache.getResource(pathInContext);
                 if (r != null && r.exists() && !r.isDirectory()) {
                     if (fullResourceCache) {
-                        if (log.isDebugEnabled())
-                            log.debug("    Found in " + cache.getBaseResource().toString());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("    Found in " + cache.getBaseResource().toString());
+                        }
                         cacheState.put(pathInContext, new CacheState(CacheState.FOUND, pathInContext, r));
                     } else {
-                        if (log.isDebugEnabled())
-                            log.debug("    Found in " + cache.getBaseResource().toString());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("    Found in " + cache.getBaseResource().toString());
+                        }
                         resourceCacheMap.put(pathInContext, cache);
                     }
                     return r;
@@ -236,8 +217,9 @@ public class CustomWebApplicationContext extends WebApplicationContext {
             /*
              * The resource cannot be found in this caches base directory
              */
-            if (log.isDebugEnabled())
-                log.debug("   Not found");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("   Not found");
+            }
         } else {
             /*
              * We know what cache the resource came from so check it still
@@ -246,14 +228,16 @@ public class CustomWebApplicationContext extends WebApplicationContext {
              */
             r = o.getResource(pathInContext);
             if (r != null && r.exists() && !r.isDirectory()) {
-                if (log.isDebugEnabled())
-                    log.debug("    Found in " + o.getBaseResource().toString());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("    Found in " + o.getBaseResource().toString());
+                }
                 return r;
             }
         }
 
-        if (log.isDebugEnabled())
-            log.debug("Checking for alias in plugins");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Checking for alias in plugins");
+        }
         String resourceAlias = getResourceAlias(pathInContext);
         if (resourceAlias != null) {
 
@@ -261,44 +245,45 @@ public class CustomWebApplicationContext extends WebApplicationContext {
              * The resource was not found with its real name in any caches base
              * directory, so repeat the operation but look for the alias
              */
-
-            if (log.isDebugEnabled())
-                log.debug("    Found alias of " + resourceAlias + ", checking in plugins");
-            for (Iterator i = reverseCaches.iterator(); i.hasNext();) {
-                ResourceCache cache = (ResourceCache) i.next();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("    Found alias of " + resourceAlias + ", checking in plugins");
+            }
+            for (ResourceCache cache : reverseCaches) {
                 r = cache.getResource(resourceAlias);
 
                 /*
-                 * When checking for resource modification, check for existence
-                 * of file. This allows file to be removed at runtime without
-                 * adding overhead when used on deployed server
-                 */
-
+                * When checking for resource modification, check for existence
+                * of file. This allows file to be removed at runtime without
+                * adding overhead when used on deployed server
+                */
                 if (r != null && r.exists() && !r.isDirectory()) {
                     if (fullResourceCache) {
-                        if (log.isDebugEnabled())
-                            log.debug("    Found in " + cache.getBaseResource().toString());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("    Found in " + cache.getBaseResource().toString());
+                        }
                         cacheState.put(pathInContext, new CacheState(CacheState.FOUND, pathInContext, r));
                         return r;
                     } else {
-                        if (log.isDebugEnabled())
-                            log.debug("    Found in " + cache.getBaseResource().toString());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("    Found in " + cache.getBaseResource().toString());
+                        }
                         resourceCacheMap.put(pathInContext, cache);
                         return r;
                     }
                 }
             }
-            if (log.isDebugEnabled())
-                log.debug("   Not found");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("   Not found");
+            }
         }
 
         /*
          * The resource could not be found in any caches base directory, so pass
          * to the main webapp
          */
-
-        if (log.isDebugEnabled())
-            log.debug("Passing to main webapp");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Passing to main webapp");
+        }
         r = super.getResource(pathInContext);
         if (r != null && r.exists() && !r.isDirectory()) {
 
@@ -306,9 +291,9 @@ public class CustomWebApplicationContext extends WebApplicationContext {
              * The resource has been found in the main webapps base directory,
              * store where it was found for quick lookup in future requests
              */
-
-            if (log.isDebugEnabled())
-                log.debug("    Found in main webapp");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("    Found in main webapp");
+            }
 
             if (fullResourceCache) {
                 cacheState.put(pathInContext, new CacheState(CacheState.FOUND, pathInContext, r));
@@ -318,16 +303,17 @@ public class CustomWebApplicationContext extends WebApplicationContext {
             return r;
         } else {
             if (fullResourceCache) {
-                if (log.isDebugEnabled())
-                    log.debug("    Not found, caching as missing");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("    Not found, caching as missing");
+                }
                 cacheState.put(pathInContext, new CacheState(CacheState.MISSING, pathInContext, r));
             }
         }
 
         /* Not found at all */
-
-        if (log.isDebugEnabled())
-            log.debug("    Found in main webapp");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("    Found in main webapp");
+        }
 
         return r;
     }

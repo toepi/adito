@@ -15,7 +15,6 @@
     <name>adito : extension</name>
 
     <modules>
-        <module>adito-community-activedirectory</module>
         <module>adito-community-unix</module>
         <module>adito-community-pam</module>
         <module>adito-community-tunnels</module>

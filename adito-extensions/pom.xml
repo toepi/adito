@@ -19,7 +19,6 @@
         <module>adito-community-pam</module>
         <module>adito-community-tunnels</module>
         <module>adito-community-web-forwards</module>
-        <module>adito-community-applications</module>
         <module>adito-community-network-places</module>
         <module>adito-community-radius</module>
         <module>adito-community-ldap</module>

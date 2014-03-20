@@ -14,10 +14,6 @@
 
     <name>adito : extension</name>
 
-    <modules>
-        <module>adito-community-web-forwards</module>
-    </modules>
-
     <dependencies>
         <dependency>
             <groupId>com.adito</groupId>

@@ -21,7 +21,6 @@
         <module>adito-community-web-forwards</module>
         <module>adito-community-network-places</module>
         <module>adito-community-radius</module>
-        <module>adito-community-ldap</module>
     </modules>
 
     <dependencies>

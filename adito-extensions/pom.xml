@@ -16,7 +16,6 @@
 
     <modules>
         <module>adito-community-unix</module>
-        <module>adito-community-pam</module>
         <module>adito-community-tunnels</module>
         <module>adito-community-web-forwards</module>
         <module>adito-community-radius</module>

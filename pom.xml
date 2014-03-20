@@ -37,7 +37,6 @@
         <module>adito-server</module>
         <module>adito-core</module>
         <module>adito-webapp</module>
-        <module>adito-agent</module>
         <module>adito-extensions</module>
         <module>adito-tools</module>
         <module>adito-distributions</module>

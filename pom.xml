@@ -39,7 +39,6 @@
         <module>adito-webapp</module>
         <module>adito-extensions</module>
         <module>adito-tools</module>
-        <module>adito-distributions</module>
     </modules>
 
     <dependencyManagement>

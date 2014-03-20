@@ -15,7 +15,6 @@
     <name>adito : extension</name>
 
     <modules>
-        <module>adito-community-unix</module>
         <module>adito-community-web-forwards</module>
     </modules>
 

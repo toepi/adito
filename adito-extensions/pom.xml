@@ -18,7 +18,6 @@
         <module>adito-community-activedirectory</module>
         <module>adito-community-unix</module>
         <module>adito-community-pam</module>
-        <module>adito-agent</module>
         <module>adito-community-tunnels</module>
         <module>adito-community-web-forwards</module>
         <module>adito-community-applications</module>

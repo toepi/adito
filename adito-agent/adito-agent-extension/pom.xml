@@ -8,10 +8,10 @@
         <version>0.9.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>adito-agent</artifactId>
+    <artifactId>adito-agent-extension</artifactId>
 
     <packaging>adito-extension</packaging>
-    <name>adito : extension : agent</name>
+    <name>adito : agent : extension</name>
 
     <properties>
         <project.build.extensionSourceDirectory>${project.build.directory}/extension</project.build.extensionSourceDirectory>

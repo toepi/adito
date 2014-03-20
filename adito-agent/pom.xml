@@ -23,5 +23,6 @@
         <module>adito-agent-client-swt</module>
         <module>adito-agent-client-swt-standalone</module>
         <module>adito-agent-client-trustedcacerts</module>
+        <module>adito-agent-extension</module>
     </modules>
 </project>

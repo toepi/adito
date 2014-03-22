@@ -134,26 +134,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>github.mvn.repo</id>
-            <url>https://github.com/toepi/adito-mvn-repo/raw/master</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>interval:60</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <repositories>
-        <repository>
-            <id>github.mvn.repo</id>
-            <url>https://github.com/toepi/adito-mvn-repo/raw/master</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>interval:60</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>

@@ -14,10 +14,6 @@
     <groupId>com.adito.maven</groupId>
     <artifactId>adito-extention-maven-plugin</artifactId>
 
-    <prerequisites>
-        <maven>3.0.0</maven>
-    </prerequisites>
-
     <packaging>maven-plugin</packaging>
     <name>adito : maven : extention plugin</name>
 

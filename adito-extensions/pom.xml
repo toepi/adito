@@ -14,24 +14,11 @@
 
     <name>adito : extension</name>
 
-    <modules>
-        <module>adito-community-activedirectory</module>
-        <module>adito-community-unix</module>
-        <module>adito-community-pam</module>
-        <module>adito-agent</module>
-        <module>adito-community-tunnels</module>
-        <module>adito-community-web-forwards</module>
-        <module>adito-community-applications</module>
-        <module>adito-community-network-places</module>
-        <module>adito-community-radius</module>
-        <module>adito-community-ldap</module>
-    </modules>
-
     <dependencies>
         <dependency>
             <groupId>com.adito</groupId>
             <artifactId>adito-testcontainer</artifactId>
-            <version>${project.version}</version>
+            <version>0.9.2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
@@ -43,19 +30,19 @@
         <dependency>
             <groupId>com.adito.maverick</groupId>
             <artifactId>maverick-multiplex</artifactId>
-            <version>${project.version}</version>
+            <version>0.9.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.adito</groupId>
             <artifactId>adito-boot</artifactId>
-            <version>${project.version}</version>
+            <version>0.9.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.adito</groupId>
             <artifactId>adito-core</artifactId>
-            <version>${project.version}</version>
+            <version>0.9.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -66,13 +53,15 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>com.adito.maven</groupId>
-                <artifactId>adito-extention-maven-plugin</artifactId>
-                <version>0.9.2-SNAPSHOT</version>
-                <extensions>true</extensions>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.adito.maven</groupId>
+                    <artifactId>adito-extention-maven-plugin</artifactId>
+                    <version>0.9.2-SNAPSHOT</version>
+                    <extensions>true</extensions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

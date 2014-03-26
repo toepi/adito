@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.junit.Ignore;
 
 import org.junit.Test;
 
@@ -229,6 +230,7 @@ public class PasswordGeneratorTest {
     /**
      */
     @Test
+    @Ignore
     public void generateThousandPhoneticPasswordsAllDifferent() {
         testRandomPasswordGeneration("phonetic");
     }

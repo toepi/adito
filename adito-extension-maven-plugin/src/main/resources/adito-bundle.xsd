@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="unqualified">
+
+    <xsd:element name="bundle">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="description" maxOccurs="1" minOccurs="1" type="xsd:string"/>
+                <xsd:element name="install" maxOccurs="1" minOccurs="1" type="ExtensionInstall"/>
+                <xsd:element name="extension" maxOccurs="1" minOccurs="1" type="ExtensionDescription"/>
+            </xsd:sequence>
+            <xsd:attribute name="version" type="xsd:string" use="required"/>
+            <xsd:attribute name="requiredHostVersion" type="xsd:string" use="required"/>
+            <xsd:attribute name="id" type="xsd:string" use="required"/>
+            <xsd:attribute name="name" type="xsd:string" use="required"/>
+            <xsd:anyAttribute/>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:complexType name="ExtensionInstall">
+        <xsd:sequence>
+            <xsd:any/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ExtensionDescription">
+        <xsd:sequence>
+            <xsd:element name="description" maxOccurs="1" minOccurs="1" type="xsd:string"/>
+            <xsd:choice>
+                <xsd:element name="plugin" maxOccurs="1" type="PluginType"/>
+            </xsd:choice>
+            <xsd:element name="propertyDefinitions" maxOccurs="1" type="ExtensionPropertyDefinitions"/>
+        </xsd:sequence>
+        <xsd:attribute name="type" type="xsd:string" use="required"/>
+        <xsd:attribute name="extension" type="xsd:string" use="required"/>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ExtensionPropertyDefinitions">
+        <xsd:sequence>
+            <xsd:any/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ExtensionType" abstract="true"/>
+    
+    <xsd:complexType name="PluginType">
+        <xsd:complexContent>
+            <xsd:extension base="ExtensionType">
+                <xsd:sequence>            
+                    <xsd:element name="classpath" maxOccurs="unbounded" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="resources" maxOccurs="unbounded" minOccurs="0" type="xsd:string"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                <xsd:attribute name="class" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>

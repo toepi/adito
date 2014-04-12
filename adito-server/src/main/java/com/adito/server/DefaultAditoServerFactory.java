@@ -37,6 +37,7 @@ import com.adito.boot.PropertyPreferences;
 import com.adito.boot.RequestHandler;
 import com.adito.boot.RequestHandlerRequest;
 import com.adito.boot.RequestHandlerResponse;
+import com.adito.boot.AditoServerFactory;
 import com.adito.boot.StopContextListenerThread;
 import com.adito.boot.SystemProperties;
 import com.adito.boot.Util;
@@ -76,6 +77,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.net.ssl.TrustManager;
@@ -131,19 +134,18 @@ import org.tanukisoftware.wrapper.WrapperManager;
  *
  * @see com.adito.boot.Context
  */
-public class Main implements WrapperListener, Context {
+public class DefaultAditoServerFactory implements AditoServerFactory, WrapperListener, Context {
 
-    private static final Log LOG = LogFactory.getLog(Main.class);
+    private static final Log LOG = LogFactory.getLog(DefaultAditoServerFactory.class);
     private static File DB_DIR = new File("db");
     private static File CONF_DIR = new File("conf");
     private static File TMP_DIR = new File("tmp");
     private static final File LOG_DIR = new File("logs");
     private static File appDir = null;
-
-    static Preferences PREF;
-    static ClassLoader bootLoader;
+    private static Preferences PREF;
 
     // Private instance variables
+    private ClassLoader bootLoader;
     private Server server;
     private long startupStarted;
     private HashMap<URL, ResourceCache> resourceCaches;
@@ -175,29 +177,25 @@ public class Main implements WrapperListener, Context {
     private Server insecureServer;
     private ServletHandler servletHandler;
 
-    public static void setBootLoader(ClassLoader bootLoader) {
-        Main.bootLoader = bootLoader;
-    }
-
-    public static void main(String[] args) throws Throwable {
+    public void createServer(final ClassLoader bootLoader, final String[] args) {
         // This is a hack to allow the Install4J installer to get the java
         // runtime that will be used
         if (args.length > 0 && args[0].equals("--jvmdir")) {
             System.out.println(SystemProperties.get("java.home"));
             System.exit(0);
         }
+        this.bootLoader = bootLoader;
         useWrapper = System.getProperty("wrapper.key") != null;
-        final Main main = new Main();
-        ContextHolder.setContext(main);
+        ContextHolder.setContext(this);
 
         if (useWrapper) {
-            WrapperManager.start(main, args);
+            WrapperManager.start(this, args);
         } else {
-            Integer returnCode = main.start(args);
+            Integer returnCode = start(args);
             if (returnCode != null) {
-                if (main.gui) {
-                    if (main.startupException == null) {
-                        main.startupException = new Exception("An exit code of " + returnCode + " was returned.");
+                if (gui) {
+                    if (startupException == null) {
+                        startupException = new Exception("An exit code of " + returnCode + " was returned.");
                     }
                     try {
                         if (SystemProperties.get("os.name").toLowerCase().startsWith("windows")) {
@@ -208,7 +206,7 @@ public class Main implements WrapperListener, Context {
                     } catch (IllegalAccessException e) {
                     } catch (UnsupportedLookAndFeelException e) {
                     }
-                    String mesg = main.startupException.getMessage() == null ? "No message supplied." : main.startupException
+                    String mesg = startupException.getMessage() == null ? "No message supplied." : startupException
                             .getMessage();
                     StringBuilder buf = new StringBuilder();
                     int l = 0;
@@ -229,19 +227,23 @@ public class Main implements WrapperListener, Context {
                     }
                     mesg = buf.toString();
                     final String fMesg = mesg;
-                    SwingUtilities.invokeAndWait(new Runnable() {
-                        public void run() {
-                            JOptionPane.showMessageDialog(null, fMesg, "Startup Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    });
+                    try {
+                        SwingUtilities.invokeAndWait(new Runnable() {
+                            public void run() {
+                                JOptionPane.showMessageDialog(null, fMesg, "Startup Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        });
+                    } catch (InterruptedException ex) {
+                    } catch (InvocationTargetException ex) {
+                    }
                 }
-                System.exit(returnCode.intValue());
+                System.exit(returnCode);
             } else {
                 Runtime.getRuntime().addShutdownHook(new Thread() {
                     @Override
                     public void run() {
-                        if (!main.shuttingDown) {
-                            main.stop(0);
+                        if (!shuttingDown) {
+                            DefaultAditoServerFactory.this.stop(0);
                         }
                     }
                 });
@@ -260,7 +262,7 @@ public class Main implements WrapperListener, Context {
         // Parse the command line
         Integer returnCode = parseCommandLine(args);
         if (returnCode != null) {
-            if (returnCode.intValue() == 999) {
+            if (returnCode == 999) {
                 return null;
             }
             return returnCode;
@@ -416,7 +418,7 @@ public class Main implements WrapperListener, Context {
         } catch (Exception t) {
             startupException = t;
             LOG.error("Failed to start the server. " + t.getMessage(), t);
-            return new Integer(1);
+            return 1;
         }
 
         return null;
@@ -1342,7 +1344,7 @@ public class Main implements WrapperListener, Context {
                     System.out.println("                   been configured.");
                     System.out.println(" --jettyLog=LOG    The location of the Jetty NCSA request log.");
                     System.out.println("\nInvalid option: " + arg + ".\n");
-                    return new Integer(2);
+                    return 2;
                 }
             }
 
@@ -1354,17 +1356,17 @@ public class Main implements WrapperListener, Context {
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            return new Integer(2);
+            return 2;
         }
 
         // Perform a full reset
         if (fullReset) {
             if (fullReset()) {
                 System.err.println("Configuration has been fully reset");
-                return new Integer(0);
+                return 0;
             } else {
                 System.err.println("Aborted full reset.");
-                return new Integer(1);
+                return 1;
             }
         }
 
@@ -1421,11 +1423,9 @@ public class Main implements WrapperListener, Context {
         File[] f = getDBDirectory().listFiles();
         if (f != null) {
             for (File f1 : f) {
-                if (!f1.getName().equals("CVS") && !f1.equals(".cvsignore")) {
-                    System.out.println("    Deleting " + f1.getPath());
-                    if (!f1.delete()) {
-                        System.out.println("        Failed to remove");
-                    }
+                System.out.println("    Deleting " + f1.getPath());
+                if (!f1.delete()) {
+                    System.out.println("        Failed to remove");
                 }
             }
         }

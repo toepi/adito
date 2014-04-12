@@ -34,6 +34,12 @@
             <artifactId>maverick-ssl</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!--
         deps need to boot server (define here for simpler assembly) -> goes into lib
@@ -68,4 +74,13 @@
             <version>1.2.17</version>
         </dependency>
     </dependencies>
+    
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+    </build>
 </project>

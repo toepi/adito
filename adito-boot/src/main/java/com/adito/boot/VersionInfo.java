@@ -68,19 +68,23 @@ public class VersionInfo {
      */
     public static class Version implements Comparable<Version> {
 
-        private static final int QUALLIFIER_IDX = 6;
+        private static final int QUALLIFIER_IDX = 7;
         private final int major;
         private final int minor;
         private final int build;
         private final String quallifier;
 
         public Version(final String versionStr) {
-            final Matcher matcher = Pattern.compile("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})((-|\\.)(.+))?$")
+            final Matcher matcher = Pattern.compile("(\\d{1,3})\\.(\\d{1,3})(\\.(\\d{1,3})((-|\\.)(.+))?)?$")
                     .matcher(versionStr);
             if (matcher.find()) {
                 major = Integer.parseInt(matcher.group(1));
                 minor = Integer.parseInt(matcher.group(2));
-                build = Integer.parseInt(matcher.group(3));
+                if (matcher.group(4) == null) {
+                    build = 0;
+                } else {
+                    build = Integer.parseInt(matcher.group(4));
+                }
                 if (matcher.group(QUALLIFIER_IDX) == null) {
                     quallifier = null;
                 } else {
@@ -91,7 +95,7 @@ public class VersionInfo {
                         String.format("VersionStr '%s' is not a valid version!", versionStr)
                 );
             }
-        }        
+        }
 
         @Override
         public boolean equals(final Object obj) {

@@ -209,4 +209,13 @@ public class VersionInfoTest {
     public void isDevelopmentVersionForNonSnapshotShouldReturnFalse() throws Exception {
         Assert.assertFalse(new VersionInfo.Version("0.9.0.RC1").isDevelopmentVersion());
     }
+    
+    @Test
+    public void testCreationWithMajorAndMinorOnly() throws Exception {
+        final VersionInfo.Version version = new VersionInfo.Version("0.9");
+        Assert.assertEquals(0, version.getMajor());
+        Assert.assertEquals(9, version.getMinor());
+        Assert.assertEquals(0, version.getBuild());
+        Assert.assertEquals("0.9.0", version.toString());
+    }
 }

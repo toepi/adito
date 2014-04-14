@@ -63,8 +63,7 @@ public class VersionInfo {
      * <code>0.1.14_alpha</code></p> would give a major version of 0, a minor
      * version of 1, a build version of 14 and a tag of 'alpha'.
      *
-     * @author Brett Smith <a
-     * href="mailto:brett@localhost">&lt;brett@localhost&gt;</a>
+     * @author Brett Smith
      */
     public static class Version implements Comparable<Version> {
 
@@ -75,7 +74,7 @@ public class VersionInfo {
         private final String quallifier;
 
         public Version(final String versionStr) {
-            final Matcher matcher = Pattern.compile("(\\d{1,3})\\.(\\d{1,3})(\\.(\\d{1,3})((-|\\.)(.+))?)?$")
+            final Matcher matcher = Pattern.compile("(\\d{1,3})\\.(\\d{1,3})(\\.(\\d{1,3})((-|\\.|_)(.+))?)?$")
                     .matcher(versionStr);
             if (matcher.find()) {
                 major = Integer.parseInt(matcher.group(1));

@@ -218,4 +218,14 @@ public class VersionInfoTest {
         Assert.assertEquals(0, version.getBuild());
         Assert.assertEquals("0.9.0", version.toString());
     }
+    
+    @Test
+    public void testQuallifierWithUnderline() throws Exception {
+        Assert.assertEquals("alpha", new VersionInfo.Version("0.9.0_alpha").getQuallifier());
+    }
+    
+    @Test
+    public void testQuallifierMinus() throws Exception {
+        Assert.assertEquals("alpha", new VersionInfo.Version("0.9.0-alpha").getQuallifier());
+    }
 }
